@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Finance Manager</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0D1E70">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HFM">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #040A25;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      padding: 32px 24px;
+    }
+    .logo {
+      width: 112px;
+      height: 112px;
+      border-radius: 26px;
+      object-fit: cover;
+      margin-bottom: 22px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.07);
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+    .sub {
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      opacity: 0.35;
+      margin-bottom: 44px;
+    }
+    .install-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 22px 20px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .install-box.visible { display: block; }
+    .install-box p {
+      font-size: 13px;
+      opacity: 0.65;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .btn-install {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #1B3FA0, #0D1E70);
+      border: 1px solid rgba(255,200,60,0.3);
+      color: #FFD860;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+    }
+    .btn-install:active { opacity: 0.85; }
+    .manual-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 28px;
+    }
+    .manual-box .label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.35;
+      margin-bottom: 14px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 11px;
+      font-size: 13px;
+      opacity: 0.7;
+      line-height: 1.4;
+    }
+    .step:last-child { margin-bottom: 0; }
+    .step-num {
+      min-width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(240,165,0,0.2);
+      color: #F0A500;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .btn-acessar {
+      width: 100%;
+      max-width: 320px;
+      padding: 15px;
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-acessar:hover, .btn-acessar:active {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
+    .counter {
+      font-size: 11px;
+      opacity: 0.25;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+  <img src="icon-192.png" alt="HFM" class="logo">
+  <h1>Home Finance Manager</h1>
+  <p class="sub">Gestão Financeira Pessoal</p>
+
+  <div class="install-box" id="installBox">
+    <p>Instale o app na sua tela inicial com o ícone premium.</p>
+    <button class="btn-install" id="btnInstall">⬇ Instalar aplicativo</button>
+  </div>
+
+  <div class="manual-box">
+    <div class="label">Como salvar na tela inicial</div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <span>Toque nos <strong>3 pontinhos</strong> (⋮) no Chrome</span>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <span>Toque em <strong>"Adicionar à tela inicial"</strong></span>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <span>Confirme tocando em <strong>"Adicionar"</strong></span>
+    </div>
+  </div>
+
+  <button class="btn-acessar" id="btnAcessar">Acessar o sistema →</button>
+  <div class="counter" id="counter">Redirecionando em 15s…</div>
+
+  <script>
+    var GAS_URL = "https://script.google.com/macros/s/AKfycbxp8-w3VOmKEV5wKjIUflzF-UEnRljCia7bsUaWrw-cXYuF4xs6yoJWwOjIe9qqylYKcQ/exec";
+    var deferredPrompt = null;
+    var seconds = 15;
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBox').classList.add('visible');
+    });
+
+    document.getElementById('btnInstall').addEventListener('click', function() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(r) {
+          if (r.outcome === 'accepted') window.location.href = GAS_URL;
+          deferredPrompt = null;
+        });
+      }
+    });
+
+    document.getElementById('btnAcessar').addEventListener('click', function() {
+      window.location.href = GAS_URL;
+    });
+
+    var counterEl = document.getElementById('counter');
+    var timer = setInterval(function() {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        counterEl.textContent = 'Redirecionando…';
+        window.location.href = GAS_URL;
+      } else {
+        counterEl.textContent = 'Redirecionando em ' + seconds + 's…';
+      }
+    }, 1000);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
