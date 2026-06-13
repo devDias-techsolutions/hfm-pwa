@@ -3,7 +3,7 @@
   "short_name": "HFM",
   "description": "Gestor Financeiro Pessoal",
   "start_url": "./",
-  "display": "browser",
+  "display": "minimal-ui",
   "background_color": "#040A25",
   "theme_color": "#0D1E70",
   "icons": [
