@@ -25,16 +25,14 @@
     .eyebrow{font-size:10px;letter-spacing:4px;font-weight:700;color:#b9c9ee;margin-bottom:20px;opacity:.72}
     h1{font-size:clamp(42px,7vw,72px);line-height:.98;letter-spacing:-3px;font-weight:700}h1 span{color:#dce6ff}
     .intro{max-width:500px;margin:24px auto 34px;color:#aebbd8;font-size:15px;line-height:1.7}
-    .actions{display:flex;flex-direction:column;align-items:center}
-    .btn-primary{min-width:240px;padding:15px 20px;border:0;border-radius:14px;cursor:pointer;display:flex;justify-content:center;gap:22px;align-items:center;color:#07133f;background:linear-gradient(135deg,#f4c65d,#df9820);font-size:15px;font-weight:700;box-shadow:0 12px 34px rgba(226,160,42,.2);transition:transform .2s,box-shadow .2s}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 42px rgba(226,160,42,.3)}.arrow{font-size:20px;font-weight:400}
-    .counter{margin-top:12px;font-size:10px;color:#8191b7;letter-spacing:.4px}
-    .install-box{display:none;max-width:430px;margin:24px auto 0;padding:14px 16px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.045);backdrop-filter:blur(14px);align-items:center;justify-content:space-between;gap:14px;text-align:left}
-    .install-box.visible{display:flex}.install-copy{display:flex;flex-direction:column;gap:3px}.install-copy strong{font-size:12px}.install-copy span{font-size:11px;color:#8796ba}
-    .btn-install{border:1px solid rgba(244,198,93,.35);background:rgba(244,198,93,.12);color:#f4c65d;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}
+    .loading-wrap{display:flex;flex-direction:column;align-items:center;gap:9px;margin-top:36px;min-height:82px}
+    .loading-ring{width:28px;height:28px;border:2px solid rgba(255,255,255,.16);border-top-color:#e8aa2f;border-right-color:rgba(232,170,47,.55);border-radius:50%;animation:hfmSpin .9s linear infinite;box-shadow:0 0 22px rgba(232,170,47,.08)}
+    .loading-title{font-size:12px;font-weight:600;letter-spacing:.35px;color:#d6e0f6}
+    .loading-subtitle{font-size:10px;color:#8191b7;letter-spacing:.2px}
+    @keyframes hfmSpin{to{transform:rotate(360deg)}}
     .features{display:flex;justify-content:center;gap:42px;margin:48px auto 0;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);max-width:560px}.features div{display:flex;flex-direction:column;gap:6px}.features b{font-size:9px;letter-spacing:2px;color:#e8aa2f}.features span{font-size:11px;color:#8f9fbe}
     footer{position:absolute;bottom:18px;font-size:9px;letter-spacing:1.5px;color:#637292;z-index:1}footer span{margin:0 7px;color:#c28b25}
-    @media(max-width:560px){.shell{padding:26px 18px 48px}.brand-mark{width:62px;height:62px;margin-bottom:22px}h1{font-size:44px;letter-spacing:-2px}.intro{font-size:13px;margin:20px auto 28px}.features{gap:22px;margin-top:40px}.features span{font-size:10px}.install-box.visible{align-items:flex-start}.btn-install{white-space:nowrap}}
+    @media(max-width:560px){.shell{padding:26px 18px 48px}.brand-mark{width:62px;height:62px;margin-bottom:22px}h1{font-size:44px;letter-spacing:-2px}.intro{font-size:13px;margin:20px auto 28px}.features{gap:22px;margin-top:40px}.features span{font-size:10px}}
   </style>
 </head>
 <body>
@@ -45,13 +43,10 @@
       <div class="eyebrow">HOME FINANCE MANAGER</div>
       <h1>Seu dinheiro.<br><span>Sob seu controle.</span></h1>
       <p class="intro">Uma visão simples e elegante para organizar sua vida financeira, acompanhar seus gastos e tomar decisões com clareza.</p>
-      <div class="actions">
-        <button class="btn-primary" id="btnAcessar"><span>Acessar o sistema</span><span class="arrow">→</span></button>
-        <div class="counter" id="counter">Redirecionando em 15s…</div>
-      </div>
-      <div class="install-box" id="installBox">
-        <div class="install-copy"><strong>Tenha o HFM na sua tela inicial</strong><span>Instale como aplicativo para acesso rápido.</span></div>
-        <button class="btn-install" id="btnInstall">Instalar</button>
+      <div class="loading-wrap" aria-live="polite">
+        <div class="loading-ring"></div>
+        <div class="loading-title">Carregando seus dados</div>
+        <div class="loading-subtitle">Preparando seu ambiente financeiro…</div>
       </div>
       <div class="features"><div><b>01</b><span>Visão clara</span></div><div><b>02</b><span>Controle simples</span></div><div><b>03</b><span>Decisões melhores</span></div></div>
     </section>
@@ -59,40 +54,10 @@
   </main>
   <script>
     var GAS_URL = "https://script.google.com/macros/s/AKfycbxp8-w3VOmKEV5wKjIUflzF-UEnRljCia7bsUaWrw-cXYuF4xs6yoJWwOjIe9qqylYKcQ/exec";
-    var deferredPrompt = null;
-    var seconds = 15;
-
-    window.addEventListener('beforeinstallprompt', function(e) {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installBox').classList.add('visible');
-    });
-
-    document.getElementById('btnInstall').addEventListener('click', function() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function(r) {
-          if (r.outcome === 'accepted') window.location.href = GAS_URL;
-          deferredPrompt = null;
-        });
-      }
-    });
-
-    document.getElementById('btnAcessar').addEventListener('click', function() {
-      window.location.href = GAS_URL;
-    });
-
-    var counterEl = document.getElementById('counter');
-    var timer = setInterval(function() {
-      seconds--;
-      if (seconds <= 0) {
-        clearInterval(timer);
-        counterEl.textContent = 'Redirecionando…';
-        window.location.href = GAS_URL;
-      } else {
-        counterEl.textContent = 'Redirecionando em ' + seconds + 's…';
-      }
-    }, 1000);
+    // Pequena pausa para a tela de abertura respirar antes do redirecionamento.
+    setTimeout(function() {
+      window.location.replace(GAS_URL);
+    }, 1800);
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
