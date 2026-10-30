@@ -7,7 +7,7 @@
 <meta name="description" content="Home Finance Manager — gestão financeira familiar.">
 <meta name="robots" content="noindex">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#051840">
+<meta name="theme-color" content="#13213C">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,14 +20,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* Tokens iguais aos do app (Design System HFM) */
-  :root{--bg:#051840;--bg2:#06122a;--card:#0d1f3d;--card2:#112749;--line:rgba(148,178,220,.18);--ink:#eef4fc;--ink2:#aebed6;--ink3:#7f92ad;--blue:#2d6be4;--blue2:#4f93ff;--amber:#fca311;--green:#3ecf8e;--red:#ff7b7b}
+  :root{--bg:#071321;--bg2:#0b1c2f;--card:#0e2036;--card2:#12253d;--line:rgba(188,211,237,.16);--ink:#edf4fc;--ink2:#b8c7d9;--ink3:#8ea0b8;--blue:#2d6be4;--blue2:#6ea5ee;--amber:#fca311;--green:#3ecf8e;--red:#ff7b7b}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{min-height:100%}
   body{
     background:
-      radial-gradient(900px 480px at 12% -8%,rgba(45,107,228,.26),transparent 60%),
+      radial-gradient(900px 480px at 12% -8%,rgba(110,165,238,.16),transparent 60%),
       radial-gradient(700px 420px at 100% 112%,rgba(252,163,17,.11),transparent 60%),
-      var(--bg2);
+      linear-gradient(145deg,var(--bg),var(--bg2));
     color:var(--ink);
     font:15px/1.55 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
     -webkit-font-smoothing:antialiased;
@@ -36,7 +36,7 @@
   .hero{width:min(460px,100%);text-align:center}
   .mark{width:84px;height:84px;margin:0 auto 20px;border-radius:22.5%;display:block;box-shadow:0 18px 44px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08)}
   h1{font-size:clamp(30px,8vw,40px);line-height:1.08;font-weight:800;letter-spacing:-.035em}
-  h1 em{font-style:normal;color:#638cff}
+  h1 em{font-style:normal;color:#6e9fe8}
   .tag{margin:10px auto 26px;max-width:380px;color:var(--ink2);font-size:14px}
 
   .card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:18px;padding:20px 18px;text-align:left;box-shadow:0 22px 50px -28px rgba(0,0,0,.7)}
@@ -47,14 +47,14 @@
   .btn:focus-visible,.lnk:focus-visible,input:focus-visible{outline:3px solid var(--blue2);outline-offset:2px}
   .pri{background:linear-gradient(180deg,#ffc04d,#fca311);color:#1a1000;box-shadow:0 10px 26px -12px rgba(252,163,17,.85)}
   .pri:hover{transform:translateY(-1px);box-shadow:0 14px 30px -12px rgba(252,163,17,.95)}
-  .sec{background:rgba(45,107,228,.14);color:#cfe0ff;border:1px solid rgba(79,147,255,.4)}
-  .sec:hover{background:rgba(45,107,228,.24)}
+  .sec{background:rgba(110,165,238,.12);color:#d6e6fb;border:1px solid rgba(110,165,238,.38)}
+  .sec:hover{background:rgba(110,165,238,.22)}
   .btn[disabled]{opacity:.6;cursor:wait}
   .lnk{background:none;border:0;color:var(--blue2);font:inherit;font-weight:600;font-size:13px;cursor:pointer;text-decoration:underline;padding:6px 2px}
   .row{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:6px}
 
   label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin:14px 0 6px;letter-spacing:.02em}
-  input{width:100%;background:#0a1830;border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px 13px;font:13px 'DM Mono',ui-monospace,Menlo,Consolas,monospace}
+  input{width:100%;background:#0a1a2c;border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px 13px;font:13px 'DM Mono',ui-monospace,Menlo,Consolas,monospace}
   input::placeholder{color:#5f738f}
   input:focus{border-color:rgba(79,147,255,.7)}
   .msg{min-height:18px;margin:8px 2px 0;font-size:12.5px;color:var(--ink2)}
