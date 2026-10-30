@@ -163,14 +163,8 @@
   
 function destino() {
   if (!APP) return '';
-
-  // Solicita a seleção de conta, indicando o e-mail preferencial.
-  if (PERGUNTA) return seletorDeConta(APP, CONTA);
-
-  // Se não houver seleção manual, utiliza o e-mail configurado.
-  return CONTA
-    ? APP + '?authuser=' + encodeURIComponent(CONTA)
-    : APP;
+  if (PERGUNTA) return seletorDeConta(APP, '');
+  return CONTA ? APP + '?authuser=' + encodeURIComponent(CONTA) : APP;
 }
 
   function abrir() { var d = destino(); if (d) location.href = d; }
