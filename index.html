@@ -93,8 +93,7 @@
         <strong>Instalar no iPhone ou iPad</strong>
         <ol><li>Toque em <b>Compartilhar</b> (o quadrado com a seta) no Safari.</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li><li>Confirme em <b>Adicionar</b>.</li></ol>
       </div>
-      <p class="note" id="conta-info" hidden style="margin:12px auto 0"></p>
-      <div class="row"><button class="lnk" id="b-conta" type="button">Escolher a conta Google</button><button class="lnk" id="b-trocar" type="button">Usar outro endereço de app</button></div>
+      <div class="row"><button class="lnk" id="b-trocar" type="button">Usar outro endereço de app</button></div>
       <div class="ios" style="margin-top:16px">
         <strong>Tem mais de uma conta Google neste celular?</strong>
         Se aparecer <b>“Não foi possível abrir o arquivo”</b>, o Google escolheu a conta errada. Abra este link numa <b>guia anônima</b> do Chrome (⋮ → Nova guia anônima) e entre só com a conta da sua planilha do HFM. Também funciona usar outro navegador, só para o HFM.
@@ -136,20 +135,6 @@
   function ler() { try { return validar(localStorage.getItem(KEY)); } catch (e) { return ''; } }
   function gravar(u) { try { localStorage.setItem(KEY, u); } catch (e) {} }
   function apagar() { try { localStorage.removeItem(KEY); } catch (e) {} }
-  /* Conta Google (opcional): e-mail como dica (?authuser=) e/ou passar sempre pelo seletor de contas do Google. */
-  var KC = 'hfm_conta', KP = 'hfm_pergunta';
-  function emailOk(e) { e = String(e || '').trim(); return /^[^\s@<>"'&]{1,64}@[A-Za-z0-9.-]{1,120}\.[A-Za-z]{2,}$/.test(e) ? e : ''; }
-  function lerConta() { try { return emailOk(localStorage.getItem(KC)); } catch (e) { return ''; } }
-  function lerPergunta() { try { return localStorage.getItem(KP) === '1'; } catch (e) { return false; } }
-  function paramHash(nome) {
-    var m = new RegExp('[#&]' + nome + '=([^&]*)').exec(location.hash || '');
-    if (!m) return null;
-    try { return decodeURIComponent(m[1]); } catch (e) { return ''; }
-  }
-  function seletorDeConta(u, email) {   // só monta a partir de um endereço já validado
-    var c = 'https://accounts.google.com/AccountChooser?continue=' + encodeURIComponent(u);
-    return email ? c + '&Email=' + encodeURIComponent(email) : c;
-  }
   function doHash() {
     var m = /[#&]app=([^&]+)/.exec(location.hash || '');
     if (!m) return null;
@@ -162,23 +147,10 @@
   var APP = '';
   var promptInst = null;
 
-  var CONTA = '', PERGUNTA = false;
-  
-function destino() {
-  if (!APP) return '';
-  if (PERGUNTA) return seletorDeConta(APP, '');
-  return CONTA ? APP + '?authuser=' + encodeURIComponent(CONTA) : APP;
-}
-
-  function abrir() { var d = destino(); if (d) location.href = d; }
+  function abrir() { if (APP) location.href = APP; }
   function mostrarPronto() {
     $('v-config').hidden = true; $('v-pronto').hidden = false;
     $('b-abrir').onclick = abrir;
-    $('b-conta').onclick = function () { if (APP) location.href = seletorDeConta(APP, CONTA); };
-    var ci = $('conta-info');
-    if (PERGUNTA) { ci.textContent = 'Vou pedir para você escolher a conta Google ao abrir.'; ci.hidden = false; }
-    else if (CONTA) { ci.textContent = 'Abrindo com a conta ' + CONTA + '.'; ci.hidden = false; }
-    else ci.hidden = true;
     if (!standalone) {
       if (ios) $('ios').hidden = false;
     }
@@ -216,8 +188,7 @@ function destino() {
   };
   $('url').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('b-salvar').click(); });
   $('b-trocar').onclick = function () {
-    apagar(); APP = ''; CONTA = ''; PERGUNTA = false;
-    try { localStorage.removeItem(KC); localStorage.removeItem(KP); } catch (e) {}
+    apagar(); APP = '';
     try { history.replaceState(null, '', location.pathname); } catch (e) {}
     $('url').value = ''; $('m').textContent = ''; $('m').className = 'msg';
     mostrarConfig();
@@ -225,20 +196,12 @@ function destino() {
 
   /* Prioridade: link com #app=… (instalação) > endereço salvo neste aparelho */
   var h = doHash();
-  if (h) {
-    gravar(h); APP = h;
-    // o link de instalação pode trazer a conta (&email=) e/ou o pedido de escolher sempre (&conta=escolher)
-    var em = paramHash('email'); var pe = paramHash('conta') === 'escolher';
-    try {
-      if (em !== null) { if (emailOk(em)) localStorage.setItem(KC, emailOk(em)); else localStorage.removeItem(KC); }
-      if (paramHash('app') !== null) { if (pe) localStorage.setItem(KP, '1'); else localStorage.removeItem(KP); }
-    } catch (e) {}
-  } else {
+  if (h) { gravar(h); APP = h; }
+  else {
     APP = ler();
     // iPhone/iPad: o atalho da Tela de Início guarda o link com #app=…; se não houver nada salvo, avisa.
     if (!APP && /[#&]app=/.test(location.hash || '')) { mostrarConfig('O link recebido não é um endereço válido do HFM. Cole o endereço abaixo.'); return finalizar(); }
   }
-  CONTA = lerConta(); PERGUNTA = lerPergunta();
   if (APP) mostrarPronto(); else mostrarConfig();
   finalizar();
 
