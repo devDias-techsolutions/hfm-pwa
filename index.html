@@ -1,102 +1,211 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home Finance Manager</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0D1E70">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="HFM">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{min-height:100vh;overflow:hidden;font-family:'Segoe UI',Arial,sans-serif;color:#fff;background:linear-gradient(145deg,#03091f,#07153f 55%,#0b1e50)}
-    .shell{min-height:100vh;position:relative;display:grid;place-items:center;padding:30px 22px;overflow:hidden}
-    .shell:before{content:"";position:absolute;inset:0;opacity:.18;background:radial-gradient(circle at 50% 18%,#638cff 0,transparent 30%);pointer-events:none}
-    .ambient{position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none}.ambient-a{width:420px;height:420px;right:-210px;top:-170px;background:rgba(38,94,210,.18)}.ambient-b{width:340px;height:340px;left:-210px;bottom:-190px;background:rgba(232,170,47,.08)}
-    .hero{width:min(680px,100%);position:relative;text-align:center;z-index:1}
-    .brand-mark{width:72px;height:72px;margin:0 auto 25px;border-radius:20px;padding:1px;background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.04));box-shadow:0 20px 60px rgba(0,0,0,.28)}
-    .brand-mark img{width:100%;height:100%;border-radius:19px;display:block}
-    .eyebrow{font-size:10px;letter-spacing:4px;font-weight:700;color:#b9c9ee;margin-bottom:20px;opacity:.72}
-    h1{font-size:clamp(42px,7vw,72px);line-height:.98;letter-spacing:-3px;font-weight:700}h1 span{color:#dce6ff}
-    .intro{max-width:500px;margin:24px auto 34px;color:#aebbd8;font-size:15px;line-height:1.7}
-    .actions{display:flex;flex-direction:column;align-items:center}
-    .btn-primary{min-width:240px;padding:15px 20px;border:0;border-radius:14px;cursor:pointer;display:flex;justify-content:center;gap:22px;align-items:center;color:#07133f;background:linear-gradient(135deg,#f4c65d,#df9820);font-size:15px;font-weight:700;box-shadow:0 12px 34px rgba(226,160,42,.2);transition:transform .2s,box-shadow .2s}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 42px rgba(226,160,42,.3)}.arrow{font-size:20px;font-weight:400}
-    .counter{margin-top:12px;font-size:10px;color:#8191b7;letter-spacing:.4px}
-    .install-box{display:none;max-width:430px;margin:24px auto 0;padding:14px 16px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.045);backdrop-filter:blur(14px);align-items:center;justify-content:space-between;gap:14px;text-align:left}
-    .install-box.visible{display:flex}.install-copy{display:flex;flex-direction:column;gap:3px}.install-copy strong{font-size:12px}.install-copy span{font-size:11px;color:#8796ba}
-    .btn-install{border:1px solid rgba(244,198,93,.35);background:rgba(244,198,93,.12);color:#f4c65d;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}
-    .features{display:flex;justify-content:center;gap:42px;margin:48px auto 0;padding-top:22px;border-top:1px solid rgba(255,255,255,.08);max-width:560px}.features div{display:flex;flex-direction:column;gap:6px}.features b{font-size:9px;letter-spacing:2px;color:#e8aa2f}.features span{font-size:11px;color:#8f9fbe}
-    footer{position:absolute;bottom:18px;font-size:9px;letter-spacing:1.5px;color:#637292;z-index:1}footer span{margin:0 7px;color:#c28b25}
-    @media(max-width:560px){.shell{padding:26px 18px 48px}.brand-mark{width:62px;height:62px;margin-bottom:22px}h1{font-size:44px;letter-spacing:-2px}.intro{font-size:13px;margin:20px auto 28px}.features{gap:22px;margin-top:40px}.features span{font-size:10px}.install-box.visible{align-items:flex-start}.btn-install{white-space:nowrap}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Home Finance Manager</title>
+<meta name="description" content="Home Finance Manager — gestão financeira familiar.">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#051840">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HFM">
+<meta name="referrer" content="no-referrer">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Tokens iguais aos do app (Design System HFM) */
+  :root{--bg:#051840;--bg2:#06122a;--card:#0d1f3d;--card2:#112749;--line:rgba(148,178,220,.18);--ink:#eef4fc;--ink2:#aebed6;--ink3:#7f92ad;--blue:#2d6be4;--blue2:#4f93ff;--amber:#fca311;--green:#3ecf8e;--red:#ff7b7b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    background:
+      radial-gradient(900px 480px at 12% -8%,rgba(45,107,228,.26),transparent 60%),
+      radial-gradient(700px 420px at 100% 112%,rgba(252,163,17,.11),transparent 60%),
+      var(--bg2);
+    color:var(--ink);
+    font:15px/1.55 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .shell{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:max(28px,env(safe-area-inset-top)) 20px max(28px,env(safe-area-inset-bottom))}
+  .hero{width:min(460px,100%);text-align:center}
+  .mark{width:84px;height:84px;margin:0 auto 20px;border-radius:22.5%;display:block;box-shadow:0 18px 44px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08)}
+  h1{font-size:clamp(30px,8vw,40px);line-height:1.08;font-weight:800;letter-spacing:-.035em}
+  h1 em{font-style:normal;color:#638cff}
+  .tag{margin:10px auto 26px;max-width:380px;color:var(--ink2);font-size:14px}
+
+  .card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:18px;padding:20px 18px;text-align:left;box-shadow:0 22px 50px -28px rgba(0,0,0,.7)}
+  .card h2{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-bottom:4px}
+  .card p{color:var(--ink2);font-size:13px}
+  .stack{display:grid;gap:10px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;font:inherit;font-weight:800;font-size:15px;border:0;cursor:pointer;border-radius:13px;padding:14px 20px;text-decoration:none;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+  .btn:focus-visible,.lnk:focus-visible,input:focus-visible{outline:3px solid var(--blue2);outline-offset:2px}
+  .pri{background:linear-gradient(180deg,#ffc04d,#fca311);color:#1a1000;box-shadow:0 10px 26px -12px rgba(252,163,17,.85)}
+  .pri:hover{transform:translateY(-1px);box-shadow:0 14px 30px -12px rgba(252,163,17,.95)}
+  .sec{background:rgba(45,107,228,.14);color:#cfe0ff;border:1px solid rgba(79,147,255,.4)}
+  .sec:hover{background:rgba(45,107,228,.24)}
+  .btn[disabled]{opacity:.6;cursor:wait}
+  .lnk{background:none;border:0;color:var(--blue2);font:inherit;font-weight:600;font-size:13px;cursor:pointer;text-decoration:underline;padding:6px 2px}
+  .row{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:6px}
+
+  label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin:14px 0 6px;letter-spacing:.02em}
+  input{width:100%;background:#0a1830;border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px 13px;font:13px 'DM Mono',ui-monospace,Menlo,Consolas,monospace}
+  input::placeholder{color:#5f738f}
+  input:focus{border-color:rgba(79,147,255,.7)}
+  .msg{min-height:18px;margin:8px 2px 0;font-size:12.5px;color:var(--ink2)}
+  .msg.err{color:var(--red)}
+  .help{margin-top:14px;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.04);font-size:12.5px;color:var(--ink2)}
+  .help b{color:var(--ink)}
+
+  .ios{margin-top:12px;padding:13px 14px;border:1px solid rgba(252,163,17,.35);border-radius:14px;background:rgba(252,163,17,.08);text-align:left;font-size:12.5px;color:var(--ink2)}
+  .ios strong{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}
+  .ios ol{padding-left:18px;display:grid;gap:3px}
+  .note{margin:16px auto 0;max-width:380px;font-size:11.8px;color:var(--ink3)}
+  .abrindo{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--ink2);font-size:14px;margin-bottom:12px}
+  .spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.28);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  footer{margin-top:30px;font-size:11px;letter-spacing:.08em;color:var(--ink3)}
+  footer b{color:var(--amber);font-weight:700}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){.spin{animation:none}.btn{transition:none}}
+</style>
 </head>
 <body>
-  <main class="shell">
-    <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
-    <section class="hero">
-      <div class="brand-mark"><img src="icon-192.png" alt="Home Finance Manager"></div>
-      <div class="eyebrow">HOME FINANCE MANAGER</div>
-      <h1>Seu dinheiro.<br><span>Sob seu controle.</span></h1>
-      <p class="intro">Uma visão simples e elegante para organizar sua vida financeira, acompanhar seus gastos e tomar decisões com clareza.</p>
-      <div class="actions">
-        <button class="btn-primary" id="btnAcessar"><span>Acessar o sistema</span><span class="arrow">→</span></button>
-        <div class="counter" id="counter">Redirecionando em 15s…</div>
+<main class="shell">
+  <section class="hero">
+    <img class="mark" src="icon-192.png" width="84" height="84" alt="Home Finance Manager">
+    <h1>Home <em>Finance</em> Manager</h1>
+    <p class="tag">Veja para onde seu dinheiro vai — antes que ele vá.</p>
+
+    <!-- Tela 1: já sabemos o endereço do app -->
+    <div id="v-pronto" hidden>
+      <div class="abrindo" id="abrindo" hidden><span class="spin"></span>Abrindo o seu painel…</div>
+      <div class="stack">
+        <button class="btn pri" id="b-abrir" type="button"><span>Abrir o painel</span><span aria-hidden="true">→</span></button>
+        <button class="btn sec" id="b-inst" type="button" hidden>Instalar como aplicativo</button>
       </div>
-      <div class="install-box" id="installBox">
-        <div class="install-copy"><strong>Tenha o HFM na sua tela inicial</strong><span>Instale como aplicativo para acesso rápido.</span></div>
-        <button class="btn-install" id="btnInstall">Instalar</button>
+      <div class="ios" id="ios" hidden>
+        <strong>Instalar no iPhone ou iPad</strong>
+        <ol><li>Toque em <b>Compartilhar</b> (o quadrado com a seta) no Safari.</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li><li>Confirme em <b>Adicionar</b>.</li></ol>
       </div>
-      <div class="features"><div><b>01</b><span>Visão clara</span></div><div><b>02</b><span>Controle simples</span></div><div><b>03</b><span>Decisões melhores</span></div></div>
-    </section>
-    <footer>Gestão Financeira Pessoal <span>•</span> HFM</footer>
-  </main>
-  <script>
-    var GAS_URL = "https://script.google.com/macros/s/AKfycbxp8-w3VOmKEV5wKjIUflzF-UEnRljCia7bsUaWrw-cXYuF4xs6yoJWwOjIe9qqylYKcQ/exec";
-    var deferredPrompt = null;
-    var seconds = 15;
+      <div class="row"><button class="lnk" id="b-trocar" type="button">Usar outro endereço de app</button></div>
+      <p class="note">Se o Google pedir login, entre com a mesma conta da sua planilha do HFM.</p>
+    </div>
 
-    window.addEventListener('beforeinstallprompt', function(e) {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installBox').classList.add('visible');
-    });
+    <!-- Tela 2: falta o endereço -->
+    <div id="v-config" hidden>
+      <div class="card">
+        <h2>Conecte o seu app</h2>
+        <p>Cole abaixo o endereço do <b>seu</b> Home Finance Manager. Ele fica salvo só neste aparelho.</p>
+        <label for="url">Endereço do app (termina em /exec)</label>
+        <input id="url" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://script.google.com/macros/s/…/exec" aria-describedby="m">
+        <div class="msg" id="m" role="status" aria-live="polite"></div>
+        <button class="btn pri" id="b-salvar" type="button">Salvar e continuar</button>
+        <div class="help">Onde encontro? Na sua planilha do HFM: menu <b>Home Finance Manager → Começar aqui</b>, passo <b>4</b>. Copie o endereço mostrado lá. Em outro aparelho, use o botão <b>Instalar no celular</b> do assistente: ele já traz o endereço preenchido.</div>
+      </div>
+    </div>
+  </section>
+  <footer>Gestão Financeira Familiar <span aria-hidden="true">•</span> <b>DevDias</b> Tech Solutions</footer>
+</main>
 
-    document.getElementById('btnInstall').addEventListener('click', function() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function(r) {
-          if (r.outcome === 'accepted') window.location.href = GAS_URL;
-          deferredPrompt = null;
-        });
-      }
-    });
+<script>
+(function () {
+  'use strict';
+  var KEY = 'hfm_app_url';
+  var $ = function (id) { return document.getElementById(id); };
 
-    document.getElementById('btnAcessar').addEventListener('click', function() {
-      window.location.href = GAS_URL;
-    });
+  /* Só aceitamos endereços do Google Apps Script. Isso impede que alguém monte um link
+     #app=https://site-falso e use esta página para redirecionar para outro lugar. */
+  function validar(u) {
+    try {
+      var x = new URL(String(u || '').trim());
+      if (x.protocol !== 'https:' || x.hostname !== 'script.google.com') return '';
+      if (!/^\/(a\/[A-Za-z0-9._-]+\/)?macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(x.pathname)) return '';
+      return x.origin + x.pathname;
+    } catch (e) { return ''; }
+  }
+  function ler() { try { return validar(localStorage.getItem(KEY)); } catch (e) { return ''; } }
+  function gravar(u) { try { localStorage.setItem(KEY, u); } catch (e) {} }
+  function apagar() { try { localStorage.removeItem(KEY); } catch (e) {} }
+  function doHash() {
+    var m = /[#&]app=([^&]+)/.exec(location.hash || '');
+    if (!m) return null;
+    var v; try { v = decodeURIComponent(m[1]); } catch (e) { v = ''; }
+    return validar(v);
+  }
 
-    var counterEl = document.getElementById('counter');
-    var timer = setInterval(function() {
-      seconds--;
-      if (seconds <= 0) {
-        clearInterval(timer);
-        counterEl.textContent = 'Redirecionando…';
-        window.location.href = GAS_URL;
-      } else {
-        counterEl.textContent = 'Redirecionando em ' + seconds + 's…';
-      }
-    }, 1000);
+  var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var APP = '';
+  var promptInst = null;
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+  function abrir() { if (APP) location.href = APP; }
+  function mostrarPronto() {
+    $('v-config').hidden = true; $('v-pronto').hidden = false;
+    $('b-abrir').onclick = abrir;
+    if (!standalone) {
+      if (ios) $('ios').hidden = false;
     }
-  </script>
+    if (standalone) {            // app instalado: vai direto para o painel
+      $('abrindo').hidden = false; $('b-abrir').focus();
+      setTimeout(abrir, 450);
+    }
+  }
+  function mostrarConfig(msg) {
+    $('v-pronto').hidden = true; $('v-config').hidden = false;
+    if (msg) { $('m').textContent = msg; $('m').className = 'msg err'; }
+    $('url').focus();
+  }
+
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); promptInst = e;
+    if (APP && !standalone) $('b-inst').hidden = false;
+  });
+  window.addEventListener('appinstalled', function () { $('b-inst').hidden = true; });
+  $('b-inst').onclick = function () {
+    if (!promptInst) return;
+    promptInst.prompt();
+    promptInst.userChoice.then(function () { promptInst = null; $('b-inst').hidden = true; });
+  };
+
+  $('b-salvar').onclick = function () {
+    var v = validar($('url').value);
+    if (!v) {
+      $('m').textContent = 'Esse endereço não parece certo. Ele começa com https://script.google.com/macros/s/ e termina em /exec.';
+      $('m').className = 'msg err'; $('url').focus(); return;
+    }
+    gravar(v); APP = v;
+    try { history.replaceState(null, '', location.pathname + '#app=' + encodeURIComponent(v)); } catch (e) {}
+    mostrarPronto();
+  };
+  $('url').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('b-salvar').click(); });
+  $('b-trocar').onclick = function () {
+    apagar(); APP = '';
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
+    $('url').value = ''; $('m').textContent = ''; $('m').className = 'msg';
+    mostrarConfig();
+  };
+
+  /* Prioridade: link com #app=… (instalação) > endereço salvo neste aparelho */
+  var h = doHash();
+  if (h) { gravar(h); APP = h; }
+  else {
+    APP = ler();
+    // iPhone/iPad: o atalho da Tela de Início guarda o link com #app=…; se não houver nada salvo, avisa.
+    if (!APP && /[#&]app=/.test(location.hash || '')) { mostrarConfig('O link recebido não é um endereço válido do HFM. Cole o endereço abaixo.'); return finalizar(); }
+  }
+  if (APP) mostrarPronto(); else mostrarConfig();
+  finalizar();
+
+  function finalizar() {
+    if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {} }
+  }
+})();
+</script>
 </body>
 </html>
