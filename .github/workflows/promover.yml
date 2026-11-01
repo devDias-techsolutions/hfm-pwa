@@ -1,0 +1,26 @@
+name: Promover tela de teste para produção
+on:
+  workflow_dispatch:
+jobs:
+  promover:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar teste/App.html (mesmas regras do carregador do Apps Script)
+        run: |
+          f=teste/App.html
+          [ "$(wc -m < $f)" -gt 200000 ] || { echo "Arquivo pequeno demais (truncado?)"; exit 1; }
+          grep -q 'HFM_UI_VERSAO' $f || { echo "Falta HFM_UI_VERSAO"; exit 1; }
+          grep -q 'google.script.run' $f || { echo "Falta google.script.run"; exit 1; }
+          tail -c 50 $f | grep -qi '</html>' || { echo "Não termina em </html>"; exit 1; }
+      - name: Copiar para app/App.html
+        run: |
+          cp teste/App.html app/App.html
+          git config user.name "hfm-promover"
+          git config user.email "actions@users.noreply.github.com"
+          git add app/App.html
+          git diff --cached --quiet && { echo "Nada a promover"; exit 0; }
+          git commit -m "app: promove tela testada para produção"
+          git push
