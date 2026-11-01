@@ -10317,6 +10317,12 @@ html.hfm-priv .priv-eye .i-off { display: block; }
 /* 4 · origem da tela no rodapé do menu lateral, ao lado da versão */
 .sg-foot { margin-top: auto; padding: 12px 8px 4px; border-top: 1px solid var(--border); }
 .hfm-origem { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; line-height: 16px; color: var(--color-text-muted); }
+/* [FIX44b] interruptor como legenda inferior, alinhado à direita, com a chave no canto */
+.mesnav-chk { align-self: flex-end; flex-direction: row-reverse; margin-top: 4px; }
+@media (min-width: 901px) {
+  .mesband .mesnav { grid-template-columns: 200px minmax(0, 1fr) 200px; grid-template-areas: "ano palco ." ". chk chk"; row-gap: 0; }
+  .mesband .mesnav-chk { grid-area: chk; justify-self: end; margin-top: 4px; }
+}
 /* controles do cabeçalho com a mesma altura (40 px) */
 .topbar .theme-toggle, .mobile-topbar .theme-toggle { height: 40px; box-sizing: border-box; align-items: center; }
 .topbar .brand-icon, .mobile-topbar .brand-icon { width: 40px; height: 40px; }
@@ -12766,9 +12772,10 @@ html.hfm-priv .priv-eye .i-off { display: block; }
         '<div class="mesnav-topo"><div class="mesnav-ano"><button type="button" class="mesnav-seta" aria-label="Ano anterior" onclick="mesnavAno(-1)">‹</button>' +
         '<span class="mesnav-ano-txt">' + anoAtivo + '</span>' +
         '<button type="button" class="mesnav-seta" aria-label="Próximo ano" onclick="mesnavAno(1)">›</button></div>' +
+        '</div>' +
+        '<div class="mesnav-palco"><div class="mesnav-faixa" role="group" aria-label="Meses de ' + anoAtivo + '">' + chips + '</div></div>' +
         '<label class="mesnav-chk" title="Mostra o valor já comprometido em cada mês (fixas + parcelas do cartão)">' +
-        '<input type="checkbox" role="switch" onchange="mesnavToggleComp(this.checked)"><span>Mostrar comprometido</span></label></div>' +
-        '<div class="mesnav-palco"><div class="mesnav-faixa" role="group" aria-label="Meses de ' + anoAtivo + '">' + chips + '</div></div>';
+        '<input type="checkbox" role="switch" onchange="mesnavToggleComp(this.checked)"><span>Mostrar comprometido</span></label>';
       const faixa = box.querySelector('.mesnav-faixa');
       faixa.addEventListener('scroll', _mesnavAoRolar, { passive: true });
       faixa.addEventListener('keydown', e => {
