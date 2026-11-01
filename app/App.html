@@ -12414,7 +12414,7 @@ html.hfm-priv .priv-eye .i-off { display: block; }
     // [FIX38] estado do seletor de mês (declarado aqui porque init() usa antes do bloco do seletor)
     const _MES_ABR = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     let _compCache = {}, _compOn = true;
-    let _mesnavBusyAte = 0, _mesnavProg = false, _mesnavTimer = null;
+    let _mesnavProg = false, _mesnavTimer = null, _periodoTimer = null;
     try { _compOn = localStorage.getItem('hfm_mesnav_comp') !== '0'; } catch (e) { }
 
 
@@ -12514,6 +12514,14 @@ html.hfm-priv .priv-eye .i-off { display: block; }
     }
 
     // ── GOOGLE SCRIPT RUN WRAPPER ──────────────────
+    // Respostas de LEITURA de um período que o usuário já abandonou são descartadas (o Apps Script não permite cancelar a chamada em andamento).
+    function _periodoObsoleto(fnName, args) {
+      if (!Array.isArray(args)) return false;
+      if (fnName === 'getDashboardData' || fnName === 'getCartaoData' || fnName === 'getRaioXCartao') return args[0] !== mesAtivo || args[1] !== anoAtivo;
+      if (fnName === 'getTabelaData') return args[1] !== mesAtivo || args[2] !== anoAtivo;
+      if (fnName === 'getAnualData' || fnName === 'getFaturasAnuaisPorCartao') return args[0] !== anoAtivo;
+      return false;
+    }
     function gs(fnName, args, successFn, btnId, errorMsg, failFn) {
       // Fechamento do mês pendente: bloqueia o 1º lançamento do mês novo até fechar ou pular
       if (_fechDeveBloquear(fnName, args)) { _fechRetry = [fnName, args, successFn, btnId, errorMsg, failFn]; fechamentoAbrir(true); return; }
@@ -12522,12 +12530,14 @@ html.hfm-priv .priv-eye .i-off { display: block; }
       let call = google.script.run
         .withSuccessHandler(result => {
           hideLoader();
+          if (_periodoObsoleto(fnName, args)) return;
           if (btnId) btnSuccess(btnId);
           if (/^(salvar|editar|excluir|confirmar|reajustar|cancelar|atualizar|remover|pagar|registrar|pular|reabrir)/.test(fnName)) _compCache = {};   // FIX38: valores comprometidos mudaram
           successFn(result);
         })
         .withFailureHandler(err => {
           hideLoader();
+          if (_periodoObsoleto(fnName, args)) return;
           if (btnId) btnLoad(btnId, false);
           toast((errorMsg || 'Erro ao processar') + ': ' + (err.message || err), 'err');
           if (typeof failFn === 'function') { try { failFn(err); } catch (e) { } }
@@ -12694,13 +12704,11 @@ html.hfm-priv .priv-eye .i-off { display: block; }
       [mes, ano, mesMob, anoMob].forEach(el => {
         if (el) {
           el.classList.remove('periodo-loading');
-          el.disabled = !!loading;
-          el.setAttribute('aria-busy', loading ? 'true' : 'false');
+          el.setAttribute('aria-busy', loading ? 'true' : 'false');   // sem disabled: dá para trocar de mês durante a carga
         }
       });
 
       document.querySelectorAll('.mesnav').forEach(el => { el.classList.toggle('is-loading', !!loading); el.setAttribute('aria-busy', loading ? 'true' : 'false'); });   // FIX38
-      _mesnavBusyAte = loading ? Date.now() + 8000 : 0;   // FIX39: trava de segurança expira sozinha
       if (atualizar) {
         atualizar.classList.toggle('periodo-action-loading', !!loading);
         atualizar.disabled = !!loading;
@@ -12710,8 +12718,12 @@ html.hfm-priv .priv-eye .i-off { display: block; }
     }
 
     function alterarPeriodo() {
+      mesAtivo = parseInt(document.getElementById('selMes').value);   // respostas do mês anterior passam a ser descartadas já aqui
+      anoAtivo = parseInt(document.getElementById('selAno').value);
       _setPeriodoLoading(true);
-      carregarDashboard();
+      renderMesNav();
+      clearTimeout(_periodoTimer);
+      _periodoTimer = setTimeout(carregarDashboard, 220);   // vários toques seguidos viram uma só carga
     }
 
     // ════════════════════════════════════════════════
@@ -12826,7 +12838,6 @@ html.hfm-priv .priv-eye .i-off { display: block; }
     }
 
     function mesnavSelecionar(mes, ano) {
-      if (Date.now() < _mesnavBusyAte && !(mes === mesAtivo && ano === anoAtivo)) { renderMesNav(); return; }   // carregando: ignora toques repetidos
       ['selMes', 'selMesMob'].forEach(id => { const e = document.getElementById(id); if (e) e.value = mes; });
       ['selAno', 'selAnoMob'].forEach(id => {
         const e = document.getElementById(id); if (!e) return;
