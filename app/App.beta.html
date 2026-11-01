@@ -10323,6 +10323,9 @@ html.hfm-priv .priv-eye .i-off { display: block; }
   .mesband .mesnav { grid-template-columns: 200px minmax(0, 1fr) 200px; grid-template-areas: "ano palco ." ". chk chk"; row-gap: 0; }
   .mesband .mesnav-chk { grid-area: chk; justify-self: end; margin-top: 4px; }
 }
+/* [FIX44c] legenda do interruptor em duas linhas, alinhada à direita */
+.mesnav-chk { white-space: normal; }
+.mesnav-chk span { width: min-content; text-align: right; line-height: 14px; }
 /* controles do cabeçalho com a mesma altura (40 px) */
 .topbar .theme-toggle, .mobile-topbar .theme-toggle { height: 40px; box-sizing: border-box; align-items: center; }
 .topbar .brand-icon, .mobile-topbar .brand-icon { width: 40px; height: 40px; }
@@ -12448,7 +12451,7 @@ html.hfm-priv .priv-eye .i-off { display: block; }
     // [FIX38] estado do seletor de mês (declarado aqui porque init() usa antes do bloco do seletor)
     const _MES_ABR = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     let _compCache = {}, _compOn = true;
-    let _mesnavBusyAte = 0, _mesnavProg = false, _mesnavTimer = null;
+    let _mesnavBusyAte = 0, _mesnavProg = false, _mesnavTimer = null, _perSeq = 0, _mesnavFetchT = null;   // FIX44: _perSeq = "geração" do período; respostas de períodos antigos são descartadas
     try { _compOn = localStorage.getItem('hfm_mesnav_comp') !== '0'; } catch (e) { }
 
 
@@ -12548,14 +12551,17 @@ html.hfm-priv .priv-eye .i-off { display: block; }
     }
 
     // ── GOOGLE SCRIPT RUN WRAPPER ──────────────────
+    const _PERIODO_FNS = ['getDashboardData', 'getAnualData', 'getTabelaData', 'getCartaoData', 'getRaioXCartao'];
     function gs(fnName, args, successFn, btnId, errorMsg, failFn) {
       // Fechamento do mês pendente: bloqueia o 1º lançamento do mês novo até fechar ou pular
       if (_fechDeveBloquear(fnName, args)) { _fechRetry = [fnName, args, successFn, btnId, errorMsg, failFn]; fechamentoAbrir(true); return; }
       showLoader();
       if (btnId) btnLoad(btnId, true);
+      const _per = _perSeq;   // FIX44: geração do período no momento da chamada
       let call = google.script.run
         .withSuccessHandler(result => {
           hideLoader();
+          if (_PERIODO_FNS.indexOf(fnName) >= 0 && _per !== _perSeq) return;   // FIX44: o usuário já trocou de mês — resposta velha é descartada
           if (btnId) btnSuccess(btnId);
           if (/^(salvar|editar|excluir|confirmar|reajustar|cancelar|atualizar|remover|pagar|registrar|pular|reabrir)/.test(fnName)) _compCache = {};   // FIX38: valores comprometidos mudaram
           successFn(result);
@@ -12563,6 +12569,7 @@ html.hfm-priv .priv-eye .i-off { display: block; }
         .withFailureHandler(err => {
           hideLoader();
           if (btnId) btnLoad(btnId, false);
+          if (_PERIODO_FNS.indexOf(fnName) >= 0 && _per !== _perSeq) return;   // FIX44: erro de um mês que já foi abandonado não interessa
           toast((errorMsg || 'Erro ao processar') + ': ' + (err.message || err), 'err');
           if (typeof failFn === 'function') { try { failFn(err); } catch (e) { } }
         });
@@ -12861,14 +12868,19 @@ html.hfm-priv .priv-eye .i-off { display: block; }
     }
 
     function mesnavSelecionar(mes, ano) {
-      if (Date.now() < _mesnavBusyAte && !(mes === mesAtivo && ano === anoAtivo)) { renderMesNav(); return; }   // carregando: ignora toques repetidos
+      if (mes === mesAtivo && ano === anoAtivo && !_mesnavFetchT) return;
       ['selMes', 'selMesMob'].forEach(id => { const e = document.getElementById(id); if (e) e.value = mes; });
       ['selAno', 'selAnoMob'].forEach(id => {
         const e = document.getElementById(id); if (!e) return;
         if (!Array.from(e.options).some(o => Number(o.value) === Number(ano))) e.add(new Option(ano, ano));
         e.value = ano;
       });
-      alterarPeriodo();
+      // FIX44: navega NA HORA (a régua e o período mudam já); a busca sai após 150 ms sem novos toques,
+      // então passar por vários meses seguidos faz uma única chamada, e a resposta de meses abandonados é descartada.
+      _perSeq++; mesAtivo = Number(mes); anoAtivo = Number(ano);
+      renderMesNav(); _setPeriodoLoading(true);
+      clearTimeout(_mesnavFetchT);
+      _mesnavFetchT = setTimeout(() => { _mesnavFetchT = null; carregarDashboard(); }, 150);
     }
 
     function mesnavAno(delta) { mesnavSelecionar(mesAtivo, anoAtivo + delta); }
@@ -12891,6 +12903,7 @@ html.hfm-priv .priv-eye .i-off { display: block; }
     }
 
     function carregarDashboard() {
+      _perSeq++; clearTimeout(_mesnavFetchT);   // FIX44: nova geração; respostas anteriores serão ignoradas
       mesAtivo = parseInt(document.getElementById('selMes').value);
       anoAtivo = parseInt(document.getElementById('selAno').value);
       _setPeriodoLoading(true);
