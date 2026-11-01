@@ -1,7 +1,7 @@
 {
   "id": "./",
   "name": "Home Finance Manager",
-  "short_name": "HFM",
+  "short_name": "hfm",
   "description": "Gestão financeira familiar — Home Finance Manager",
   "lang": "pt-BR",
   "start_url": "./",
