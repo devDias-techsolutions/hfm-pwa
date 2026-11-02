@@ -10431,6 +10431,9 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
   .mesband .mesnav::before { content: ''; flex: 0 1 140px; }   /* contrapeso do interruptor: mantém a faixa no centro */
   .mesband .mesnav-chk { align-self: flex-end; margin-bottom: 22px; }   /* alinhado à faixa de meses, não ao ano */
 }
+/* ═══ [FIX47] Cabeçalhos CLAROS: sem sombra/brilho no texto (ficava "sujo"); o destaque vem da cor e do peso ═══ */
+@media (max-width: 900px) { :root[data-theme="dark"] .mobile-topbar .mesnav-chip.on b { text-shadow: none; color: var(--accent); } :root[data-theme="dark"] .mobile-topbar .mesnav-chip.on::after { box-shadow: none; } }
+@media (min-width: 901px) { :root:not([data-theme="dark"]) .mesband .mesnav-chip.on b { text-shadow: none; color: var(--accent); } :root:not([data-theme="dark"]) .mesband .mesnav-chip.on::after { box-shadow: none; } }
 </style>
 
 
@@ -17791,7 +17794,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX46', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX47', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 43;
