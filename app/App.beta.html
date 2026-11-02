@@ -10142,8 +10142,25 @@ html#hfm-root :is(.kpi-value, .kpi-snap-value, .mob-hero-value, .mob-hero-stat-v
 /* FIX29 — navegador em tela larga: mais respiro nas laterais */
 html[data-wide] .topbar, html[data-wide] .chartbar { margin-left: 32px !important; margin-right: 32px !important; }
 html[data-wide] .layout { padding-left: 32px !important; padding-right: 32px !important; }
-/* FIX31 — Topo do celular: ajustes de seletores e botões (as cores e o fundo do topo estão no FIX50). */
+/* FIX31 — Topo do celular com cor contrária ao tema (só mobile): no escuro fica claro, no claro fica azul-marinho.
+   Os tokens são redefinidos só dentro da barra, então menu, logo, seletores e tema se adaptam sozinhos. */
 @media (max-width: 900px) {
+  :root[data-theme="dark"] .mobile-topbar {
+    --surface: #FFFFFF; --surface2: #E9F0FC; --text: #0D1B38; --text-sec: #3D5278; --text-muted: #5E7194;
+    --border: rgba(10, 50, 120, .08); --border-med: rgba(10, 50, 120, .16); --accent: #0A3278; --accent-dim: rgba(10, 50, 120, .09);
+    background: linear-gradient(180deg, #F4F8FF 0%, #DCE8FA 100%) !important;
+    color: #0D1B38;
+    border: 0 !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .35), inset 0 -1px 0 rgba(10, 50, 120, .10) !important;
+  }
+  :root:not([data-theme="dark"]) .mobile-topbar {
+    --surface: #123A82; --surface2: rgba(255, 255, 255, .10); --text: #F2F6FF; --text-sec: #B9C8E6; --text-muted: #9FB2D8;
+    --border: rgba(255, 255, 255, .10); --border-med: rgba(255, 255, 255, .20); --accent: #8DB4FF; --accent-dim: rgba(141, 180, 255, .16);
+    background: linear-gradient(180deg, #0B2A66 0%, #0A3278 100%) !important;
+    color: #F2F6FF;
+    border: 0 !important;
+    box-shadow: 0 10px 28px rgba(10, 50, 120, .28), inset 0 -1px 0 rgba(255, 255, 255, .08) !important;
+  }
   :root[data-theme="dark"] .mobile-topbar .select-pill { background-image: none !important; background-color: #FFFFFF !important; color: #0D1B38 !important; -webkit-text-fill-color: #0D1B38 !important; border: 1px solid rgba(10, 50, 120, .16) !important; box-shadow: 0 1px 4px rgba(10, 50, 120, .10) !important; }
   :root:not([data-theme="dark"]) .mobile-topbar .select-pill { background-image: none !important; background-color: rgba(255, 255, 255, .12) !important; color: #F2F6FF !important; -webkit-text-fill-color: #F2F6FF !important; border: 1px solid rgba(255, 255, 255, .22) !important; box-shadow: none !important; }
   :root:not([data-theme="dark"]) .mobile-topbar .select-pill option { color: #0D1B38; background: #fff; }
@@ -10204,8 +10221,23 @@ html.hfm-priv .priv-eye .i-off { display: block; }
 /* expandida: mesmo recuo lateral da recolhida, sem “pulo” ao alternar */
 .chartbar:not(.collapsed) { padding-left: 22px !important; padding-right: 22px !important; }
 
-/* ═══ [FIX35] Topo do celular: respeita a barra de status (área segura) ═══ */
-@media (max-width: 900px) { .mobile-topbar { padding-top: max(22px, env(safe-area-inset-top)) !important; } }
+/* ═══ [FIX35] Topo do celular: transição suave com a barra do navegador/app instalado ═══
+   A barra do Android (theme_color #13213C) fica logo acima do topo do app. Antes havia um corte seco entre ela e o cartão.
+   Escuro (cartão claro): a cor da barra “derrete” nos primeiros ~30px do cartão, com degradê suavizado (sem faixa cinza).
+   Claro (cartão azul): o cartão nasce exatamente na cor da barra e abre para o azul da marca. */
+@media (max-width: 900px) {
+  :root[data-theme="dark"] .mobile-topbar {
+    padding-top: max(22px, env(safe-area-inset-top)) !important;
+    background:
+      linear-gradient(180deg,
+        rgba(19,33,60,1) 0, rgba(19,33,60,.94) 3px, rgba(19,33,60,.80) 8px, rgba(19,33,60,.58) 14px,
+        rgba(19,33,60,.34) 20px, rgba(19,33,60,.15) 26px, rgba(19,33,60,.04) 31px, rgba(19,33,60,0) 34px) top / 100% 34px no-repeat,
+      linear-gradient(180deg, #F4F8FF 0%, #DCE8FA 100%) !important;
+  }
+  :root:not([data-theme="dark"]) .mobile-topbar {
+    background: linear-gradient(180deg, #13213C 0%, #0F2A5E 34%, #0B2F6F 70%, #0A3278 100%) !important;
+  }
+}
 
 /* ═══ [FIX37] Excluir nos detalhes de receita/despesa e "Fechar mês" no menu do celular ═══ */
 .desp-detail-actions { flex-wrap: wrap; }
@@ -10380,6 +10412,9 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 .mesnav-palco::before { content: ''; position: absolute; left: -6px; right: -6px; top: 2px; bottom: 2px; width: auto; height: auto; transform: none; opacity: 1; box-shadow: none; pointer-events: none; border-radius: 28px;
   background: radial-gradient(ellipse 50% 100% at 50% 50%, var(--beam-core, rgba(255,255,255,.36)), var(--beam-mid, rgba(120,165,255,.20)) 52%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent); mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent); }
+/* cabeçalhos CLAROS (celular no tema escuro; desktop no tema claro): a luz vira um brilho azulado */
+@media (max-width: 900px) { :root:not([data-theme="dark"]) .mobile-topbar .mesnav { --beam-core: rgba(255,255,255,.6); --beam-mid: rgba(120,160,230,.12); } }
+@media (min-width: 901px) { :root:not([data-theme="dark"]) .mesband .mesnav { --beam-core: rgba(255,255,255,.6); --beam-mid: rgba(120,160,230,.12); } }
 .mesnav-palco::after { content: ''; position: absolute; left: 6%; right: 6%; bottom: 0; width: auto; height: 1px; transform: none; box-shadow: none; border-radius: 0; pointer-events: none;
   background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--accent) 70%, var(--text)) 50%, transparent); opacity: .55; }
 .mesnav-faixa { -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent); }
@@ -10396,78 +10431,55 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
   .mesband .mesnav::before { content: ''; flex: 0 1 140px; }   /* contrapeso do interruptor: mantém a faixa no centro */
   .mesband .mesnav-chk { align-self: flex-end; margin-bottom: 22px; }   /* alinhado à faixa de meses, não ao ano */
 }
-/* ═══ [FIX50] Superfície imersiva do topo (celular: .mobile-topbar · desktop: .mesband) ═══
-   Arte ESTÁTICA "Seda" (SVG vetorial embutido, uma por tema) → véu de legibilidade → grão. Sem script, sem WebGL, sem custo de bateria.
-   Para trocar a arte, troque só --fundo-arte de cada tema.
-   Os tokens de cor do cabeçalho vivem aqui, um conjunto por tema; nada é sobreposto com !important. */
-.mobile-topbar, .mesband { position: relative; isolation: isolate; overflow: hidden; }
-.mobile-topbar > :not(.hfm-fundo), .mesband > :not(.hfm-fundo) { position: relative; z-index: 1; }
-
-.hfm-fundo { position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit; overflow: hidden; background: var(--fundo-arte) center / 100% 100% no-repeat, var(--fundo-css); }
-.hfm-fundo::before { content: ''; position: absolute; inset: 0; background: var(--fundo-veu); }
-.hfm-fundo::after { content: ''; position: absolute; inset: 0; opacity: var(--fundo-grao); mix-blend-mode: overlay; background-size: 160px 160px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-
-/* tema escuro: noite azul, luz fria */
-:root[data-theme="dark"] .mobile-topbar, :root[data-theme="dark"] .mesband {
-  --surface: #0F2340; --surface2: rgba(255,255,255,.07); --text: #EAF1FF; --text-sec: #B9C8E6; --text-muted: #8FA4C8;
-  --border: rgba(255,255,255,.10); --border-med: rgba(255,255,255,.18); --accent: #8DB4FF; --accent-dim: rgba(141,180,255,.16);
-  --beam-core: rgba(255,255,255,.20); --beam-mid: rgba(120,165,255,.11);
-  --fundo-css: radial-gradient(120% 80% at 70% 0%, #17386f 0%, rgba(23,56,111,0) 62%), linear-gradient(180deg, #06122A 0%, #08183A 55%, #050D1A 100%);
-  --fundo-veu: linear-gradient(180deg, rgba(4,10,22,.50) 0%, rgba(4,10,22,0) 30%, rgba(4,10,22,0) 52%, rgba(4,10,22,.80) 100%);
-  --fundo-grao: .07;
-  --fundo-arte: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 292' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='bg1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230A2D6E'/%3E%3Cstop offset='1' stop-color='%23050E22'/%3E%3C/linearGradient%3E%3ClinearGradient id='a1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234C86F0' stop-opacity='.95'/%3E%3Cstop offset='.5' stop-color='%2317469E' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='%23071A44' stop-opacity='.95'/%3E%3C/linearGradient%3E%3ClinearGradient id='a2' x1='1' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%237BA7FF' stop-opacity='.85'/%3E%3Cstop offset='.5' stop-color='%231E55BF' stop-opacity='.85'/%3E%3Cstop offset='1' stop-color='%2308224F' stop-opacity='.9'/%3E%3C/linearGradient%3E%3ClinearGradient id='a3' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%231D4FB4'/%3E%3Cstop offset='1' stop-color='%23050E22'/%3E%3C/linearGradient%3E%3ClinearGradient id='h1' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='.5' stop-color='%23CFE0FF' stop-opacity='.85'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='h2' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23E8C26A' stop-opacity='0'/%3E%3Cstop offset='.6' stop-color='%23E8C26A' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='%23E8C26A' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='f1' x='-5%25' y='-5%25' width='110%25' height='110%25'%3E%3CfeGaussianBlur stdDeviation='.9'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='390' height='292' fill='url(%23bg1)'/%3E%3Cpath d='M-20 200 C 90 90, 190 270, 290 140 S 400 60, 430 90 L430 150 C 400 120, 330 200, 270 230 S 100 330, -20 280 Z' fill='url(%23a1)'/%3E%3Cpath d='M-20 120 C 70 40, 180 180, 280 80 S 400 10, 430 30 L430 90 C 380 70, 330 150, 270 170 S 90 220, -20 200 Z' fill='url(%23a2)' opacity='.85'/%3E%3Cpath d='M-20 270 C 120 200, 200 300, 300 220 S 410 170, 430 190 L430 300 L-20 300 Z' fill='url(%23a3)'/%3E%3Cpath d='M-20 200 C 90 90, 190 270, 290 140 S 400 60, 430 90' fill='none' stroke='url(%23h1)' stroke-width='1.6' filter='url(%23f1)'/%3E%3Cpath d='M-20 120 C 70 40, 180 180, 280 80 S 400 10, 430 30' fill='none' stroke='url(%23h1)' stroke-width='1.2' opacity='.7' filter='url(%23f1)'/%3E%3Cpath d='M-20 270 C 120 200, 200 300, 300 220 S 410 170, 430 190' fill='none' stroke='url(%23h2)' stroke-width='1.2' filter='url(%23f1)'/%3E%3C/svg%3E");
-  color: var(--text);
-}
-/* tema claro: gelo e prata, luz quente */
-:root:not([data-theme="dark"]) .mobile-topbar, :root:not([data-theme="dark"]) .mesband {
-  --surface: #FFFFFF; --surface2: rgba(255,255,255,.58); --text: #0D1B38; --text-sec: #3D5278; --text-muted: #5E7194;
-  --border: rgba(10,50,120,.10); --border-med: rgba(10,50,120,.18); --accent: #0A3278; --accent-dim: rgba(10,50,120,.09);
-  --beam-core: rgba(255,255,255,.70); --beam-mid: rgba(150,190,255,.20);
-  --fundo-css: radial-gradient(120% 80% at 70% 0%, #FFFFFF 0%, rgba(255,255,255,0) 60%), linear-gradient(180deg, #F2F7FF 0%, #D9E6F8 60%, #C9D9F0 100%);
-  --fundo-veu: linear-gradient(180deg, rgba(255,255,255,.40) 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 54%, rgba(236,243,255,.78) 100%);
-  --fundo-grao: .05;
-  --fundo-arte: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 292' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='bg2' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF'/%3E%3Cstop offset='1' stop-color='%23D6E3F6'/%3E%3C/linearGradient%3E%3ClinearGradient id='b1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF' stop-opacity='.95'/%3E%3Cstop offset='.5' stop-color='%23C6D8F2' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='%238FAEDD' stop-opacity='.9'/%3E%3C/linearGradient%3E%3ClinearGradient id='b2' x1='1' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF' stop-opacity='.9'/%3E%3Cstop offset='.5' stop-color='%23BCD0EE' stop-opacity='.85'/%3E%3Cstop offset='1' stop-color='%239DB8E3' stop-opacity='.9'/%3E%3C/linearGradient%3E%3ClinearGradient id='b3' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23B7CCEB'/%3E%3Cstop offset='1' stop-color='%23E6EEFA'/%3E%3C/linearGradient%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='.5' stop-color='%23FFFFFF' stop-opacity='1'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23B5832B' stop-opacity='0'/%3E%3Cstop offset='.6' stop-color='%23B5832B' stop-opacity='.8'/%3E%3Cstop offset='1' stop-color='%23B5832B' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='f2' x='-5%25' y='-5%25' width='110%25' height='110%25'%3E%3CfeGaussianBlur stdDeviation='.9'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='390' height='292' fill='url(%23bg2)'/%3E%3Cpath d='M-20 200 C 90 90, 190 270, 290 140 S 400 60, 430 90 L430 150 C 400 120, 330 200, 270 230 S 100 330, -20 280 Z' fill='url(%23b1)'/%3E%3Cpath d='M-20 120 C 70 40, 180 180, 280 80 S 400 10, 430 30 L430 90 C 380 70, 330 150, 270 170 S 90 220, -20 200 Z' fill='url(%23b2)' opacity='.85'/%3E%3Cpath d='M-20 270 C 120 200, 200 300, 300 220 S 410 170, 430 190 L430 300 L-20 300 Z' fill='url(%23b3)'/%3E%3Cpath d='M-20 200 C 90 90, 190 270, 290 140 S 400 60, 430 90' fill='none' stroke='url(%23g1)' stroke-width='2' filter='url(%23f2)'/%3E%3Cpath d='M-20 120 C 70 40, 180 180, 280 80 S 400 10, 430 30' fill='none' stroke='url(%23g1)' stroke-width='1.5' opacity='.9' filter='url(%23f2)'/%3E%3Cpath d='M-20 270 C 120 200, 200 300, 300 220 S 410 170, 430 190' fill='none' stroke='url(%23g2)' stroke-width='1.2' filter='url(%23f2)'/%3E%3C/svg%3E");
-  color: var(--text);
-}
-/* faixa larga do desktop: a arte cobre a faixa (sem esticar) e mostra o trecho central */
-@media (min-width: 901px) { .mesband .hfm-fundo { background-size: cover, 100% 100%; background-position: center 58%, center; } }
+/* ═══ [FIX47] Cabeçalhos CLAROS: sem sombra/brilho no texto (ficava "sujo"); o destaque vem da cor e do peso ═══ */
+@media (max-width: 900px) { :root:not([data-theme="dark"]) .mobile-topbar .mesnav-chip.on b { text-shadow: none; color: var(--accent); } :root:not([data-theme="dark"]) .mobile-topbar .mesnav-chip.on::after { box-shadow: none; } }
+@media (min-width: 901px) { :root:not([data-theme="dark"]) .mesband .mesnav-chip.on b { text-shadow: none; color: var(--accent); } :root:not([data-theme="dark"]) .mesband .mesnav-chip.on::after { box-shadow: none; } }
+/* ═══ [FIX50] Gradiente Premium nos cabeçalhos — só CSS (sem imagem, sem WebGL). Escuro: azul-noite com luz no alto. Claro: pérola/gelo. ═══ */
+.mobile-topbar, #mesband { --grao: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>"); }
+.mobile-topbar::before, #mesband::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .045; mix-blend-mode: overlay; background-image: var(--grao); }   /* granulado fino: tira o aspecto "chapado" */
+.mobile-topbar > *, #mesband > * { position: relative; z-index: 1; }
+#mesband { position: relative; overflow: hidden; }
 @media (max-width: 900px) {
-  .mobile-topbar { height: auto; min-height: 0; border: 0; }
-  :root[data-theme="dark"] .mobile-topbar { box-shadow: inset 0 -1px 0 rgba(141,180,255,.14), 0 14px 34px rgba(0,0,0,.45); }
-  :root:not([data-theme="dark"]) .mobile-topbar { box-shadow: inset 0 -1px 0 rgba(10,50,120,.10), 0 14px 34px rgba(10,50,120,.18); }
+  .mobile-topbar { position: relative !important; overflow: hidden; }
+  :root[data-theme="dark"] .mobile-topbar {
+    --surface: #0F2340; --surface2: rgba(255,255,255,.07); --text: #EAF1FF; --text-sec: #B9C8E6; --text-muted: #8FA4C8;
+    --border: rgba(255,255,255,.10); --border-med: rgba(255,255,255,.18); --accent: #8DB4FF; --accent-dim: rgba(141,180,255,.16);
+    --beam-core: rgba(255,255,255,.22); --beam-mid: rgba(120,165,255,.12);
+    background:
+      radial-gradient(ellipse 46% 70% at 50% 0%, rgba(150,190,255,.30), transparent 72%),
+      radial-gradient(ellipse 90% 60% at 50% 115%, rgba(60,110,210,.38), transparent 70%),
+      radial-gradient(ellipse 60% 80% at 0% 100%, rgba(20,50,110,.55), transparent 70%),
+      radial-gradient(ellipse 60% 80% at 100% 100%, rgba(20,50,110,.55), transparent 70%),
+      linear-gradient(180deg, #050C18 0%, #0A1B36 100%) !important;
+    color: #EAF1FF;
+    box-shadow: inset 0 -1px 0 rgba(141,180,255,.16), 0 14px 34px rgba(0,0,0,.45) !important;
+  }
+  :root:not([data-theme="dark"]) .mobile-topbar {
+    --surface: #FFFFFF; --surface2: rgba(10,50,120,.06); --text: #0D1B38; --text-sec: #3D5278; --text-muted: #5E7194;
+    --border: rgba(10,50,120,.10); --border-med: rgba(10,50,120,.18); --accent: #0A3278; --accent-dim: rgba(10,50,120,.09);
+    background:
+      radial-gradient(ellipse 46% 70% at 50% 0%, rgba(255,255,255,.95), transparent 72%),
+      radial-gradient(ellipse 90% 60% at 50% 115%, rgba(120,160,235,.35), transparent 70%),
+      linear-gradient(180deg, #F6FAFF 0%, #DCE8F8 100%) !important;
+    color: #0D1B38;
+    box-shadow: 0 10px 28px rgba(10,50,120,.16), inset 0 -1px 0 rgba(10,50,120,.10) !important;
+  }
+  :root[data-theme="dark"] .mobile-topbar .mesnav-chip.on b { color: var(--text); text-shadow: 0 0 14px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 2px color-mix(in oklab, var(--accent) 50%, transparent); }
+  :root[data-theme="dark"] .mobile-topbar .mesnav-chip.on::after { box-shadow: 0 0 10px var(--accent); }
 }
-/* destaque do mês ativo: no escuro brilha; no claro só cor e peso (brilho no texto claro fica "sujo") */
-:root[data-theme="dark"] .mesband .mesnav-chip.on b { color: var(--text); text-shadow: 0 0 14px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 2px color-mix(in oklab, var(--accent) 50%, transparent); }
-:root[data-theme="dark"] .mesband .mesnav-chip.on::after { box-shadow: 0 0 10px var(--accent); }
-:root:not([data-theme="dark"]) .mesband .mesnav-chip.on b { color: var(--accent); text-shadow: none; }
-:root:not([data-theme="dark"]) .mesband .mesnav-chip.on::after { box-shadow: none; }
-/* meses inativos: sobre a arte precisam de mais contraste que o padrão (62%) */
-.mobile-topbar .mesnav-chip b, .mesband .mesnav-chip b { color: color-mix(in oklab, var(--text) 80%, transparent); }
-.mobile-topbar .mesnav-ano-txt, .mesband .mesnav-ano-txt { color: color-mix(in oklab, var(--text) 78%, transparent); }
-/* ═══ [FIX51] Seletor de período do celular: UMA cápsula de vidro (ano | meses) e topo compacto ═══
-   Ano e meses na mesma barra, separados por um fio; o mês ativo é uma pílula. Só vale no celular; o desktop segue o FIX46. */
-@media (max-width: 900px) {
-  .mobile-topbar { gap: 8px; padding-bottom: 14px; }
-  .mobile-topbar .mesnav { --mn-w: 60px; gap: 0; }
-  .mobile-topbar .mesnav-cap { flex-direction: row; align-items: stretch; height: 56px; overflow: hidden; border-radius: 20px;
-    background: var(--surface2); border: 1px solid var(--border-med);
-    -webkit-backdrop-filter: blur(14px) saturate(1.25); backdrop-filter: blur(14px) saturate(1.25);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 22px rgba(0,0,0,.16); }
-  .mobile-topbar .mesnav-ano { flex: none; align-self: stretch; align-items: center; height: auto; padding: 0 2px; gap: 0; border-right: 1px solid var(--border-med); }
-  .mobile-topbar .mesnav-ano-txt { padding: 0 2px; font-size: 14px; font-weight: 700; letter-spacing: .02em; color: var(--text); }
-  .mobile-topbar .mesnav-seta { width: 32px; height: 44px; font-size: 18px; color: var(--text-sec); }
-  .mobile-topbar .mesnav-palco { flex: 1 1 auto; min-width: 0; height: auto; }
-  .mobile-topbar .mesnav-palco::before, .mobile-topbar .mesnav-palco::after { content: none; }
-  .mobile-topbar .mesnav-faixa { height: 100%; padding: 0 calc(50% - var(--mn-w) / 2); -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24%, #000 76%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 24%, #000 76%, transparent 100%); }
-  .mobile-topbar .mesnav-chip { justify-content: center; gap: 1px; }
-  .mobile-topbar .mesnav-chip::before { content: ''; position: absolute; inset: 7px 3px; border-radius: 14px; background: transparent; transition: background .2s, box-shadow .2s; }
-  .mobile-topbar .mesnav-chip::after { content: none; }
-  .mobile-topbar .mesnav-chip b { font-size: 13px; font-weight: 600; }
-  .mobile-topbar .mesnav-chip em { font-size: 10.5px; line-height: 12px; }
-  .mobile-topbar .mesnav-chip.on::before { background: var(--accent-dim); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 50%, transparent); }
-  .mobile-topbar .mesnav-chip.on b { font-size: 14px; font-weight: 700; text-shadow: none; color: var(--accent); }
-  :root[data-theme="dark"] .mobile-topbar .mesnav-chip.on b { color: #FFFFFF; }
+@media (min-width: 901px) {
+  :root[data-theme="dark"] .mesband {
+    background:
+      radial-gradient(ellipse 34% 120% at 50% 0%, rgba(150,190,255,.26), transparent 72%),
+      radial-gradient(ellipse 60% 90% at 50% 120%, rgba(60,110,210,.30), transparent 70%),
+      linear-gradient(180deg, #050C18 0%, #0A1B36 100%);
+  }
+  :root:not([data-theme="dark"]) .mesband {
+    background:
+      radial-gradient(ellipse 34% 120% at 50% 0%, rgba(255,255,255,.95), transparent 72%),
+      radial-gradient(ellipse 60% 90% at 50% 120%, rgba(120,160,235,.30), transparent 70%),
+      linear-gradient(180deg, #F6FAFF 0%, #DCE8F8 100%);
+  }
 }
 </style>
 
@@ -10830,7 +10842,6 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 
   <!-- MOBILE TOPBAR -->
   <div class="mobile-topbar">
-    <div class="hfm-fundo" aria-hidden="true"></div>
     <!-- Linha 1: Brand + tema -->
     <div class="mob-topbar-row hfm-topbar-main">
       <button class="mob-back-btn" id="mob-back-btn" onclick="voltarMobile()" aria-label="Voltar">
@@ -10904,7 +10915,6 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 
   <!-- FAIXA DE PERÍODO (desktop) — [FIX40] faixa dedicada: régua de meses + leitura do comprometido -->
   <div class="mesband" id="mesband">
-    <div class="hfm-fundo" aria-hidden="true"></div>
     <div class="mesnav" id="mesnav-desk" role="group" aria-label="Escolher mês"></div>
   </div>
 
@@ -17831,7 +17841,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX51', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX50', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 43;
