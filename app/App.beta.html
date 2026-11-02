@@ -10142,7 +10142,7 @@ html#hfm-root :is(.kpi-value, .kpi-snap-value, .mob-hero-value, .mob-hero-stat-v
 /* FIX29 — navegador em tela larga: mais respiro nas laterais */
 html[data-wide] .topbar, html[data-wide] .chartbar { margin-left: 32px !important; margin-right: 32px !important; }
 html[data-wide] .layout { padding-left: 32px !important; padding-right: 32px !important; }
-/* FIX31 — Topo do celular: ajustes de seletores e botões (as cores e o fundo do topo estão no FIX49). */
+/* FIX31 — Topo do celular: ajustes de seletores e botões (as cores e o fundo do topo estão no FIX50). */
 @media (max-width: 900px) {
   :root[data-theme="dark"] .mobile-topbar .select-pill { background-image: none !important; background-color: #FFFFFF !important; color: #0D1B38 !important; -webkit-text-fill-color: #0D1B38 !important; border: 1px solid rgba(10, 50, 120, .16) !important; box-shadow: 0 1px 4px rgba(10, 50, 120, .10) !important; }
   :root:not([data-theme="dark"]) .mobile-topbar .select-pill { background-image: none !important; background-color: rgba(255, 255, 255, .12) !important; color: #F2F6FF !important; -webkit-text-fill-color: #F2F6FF !important; border: 1px solid rgba(255, 255, 255, .22) !important; box-shadow: none !important; }
@@ -10396,16 +10396,14 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
   .mesband .mesnav::before { content: ''; flex: 0 1 140px; }   /* contrapeso do interruptor: mantém a faixa no centro */
   .mesband .mesnav-chk { align-self: flex-end; margin-bottom: 22px; }   /* alinhado à faixa de meses, não ao ano */
 }
-/* ═══ [FIX49] Superfície imersiva do topo (celular: .mobile-topbar · desktop: .mesband) ═══
-   Substitui a imagem embutida do FIX48 e os fundos "invertidos" dos FIX31/FIX35.
-   Camadas: gradiente CSS (fallback, sempre presente) → <canvas> WebGL com dunas procedurais → véu de legibilidade → grão.
+/* ═══ [FIX50] Superfície imersiva do topo (celular: .mobile-topbar · desktop: .mesband) ═══
+   Arte ESTÁTICA "Seda" (SVG vetorial embutido, uma por tema) → véu de legibilidade → grão. Sem script, sem WebGL, sem custo de bateria.
+   Para trocar a arte, troque só --fundo-arte de cada tema.
    Os tokens de cor do cabeçalho vivem aqui, um conjunto por tema; nada é sobreposto com !important. */
 .mobile-topbar, .mesband { position: relative; isolation: isolate; overflow: hidden; }
 .mobile-topbar > :not(.hfm-fundo), .mesband > :not(.hfm-fundo) { position: relative; z-index: 1; }
 
-.hfm-fundo { position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit; overflow: hidden; background: var(--fundo-css); }
-.hfm-fundo canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity .9s ease; }
-.hfm-fundo.pronto canvas { opacity: 1; }
+.hfm-fundo { position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit; overflow: hidden; background: var(--fundo-arte) center / 100% 100% no-repeat, var(--fundo-css); }
 .hfm-fundo::before { content: ''; position: absolute; inset: 0; background: var(--fundo-veu); }
 .hfm-fundo::after { content: ''; position: absolute; inset: 0; opacity: var(--fundo-grao); mix-blend-mode: overlay; background-size: 160px 160px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
@@ -10418,6 +10416,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
   --fundo-css: radial-gradient(120% 80% at 70% 0%, #17386f 0%, rgba(23,56,111,0) 62%), linear-gradient(180deg, #06122A 0%, #08183A 55%, #050D1A 100%);
   --fundo-veu: linear-gradient(180deg, rgba(4,10,22,.50) 0%, rgba(4,10,22,0) 30%, rgba(4,10,22,0) 52%, rgba(4,10,22,.80) 100%);
   --fundo-grao: .07;
+  --fundo-arte: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 292' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='bg1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230A2D6E'/%3E%3Cstop offset='1' stop-color='%23050E22'/%3E%3C/linearGradient%3E%3ClinearGradient id='a1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234C86F0' stop-opacity='.95'/%3E%3Cstop offset='.5' stop-color='%2317469E' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='%23071A44' stop-opacity='.95'/%3E%3C/linearGradient%3E%3ClinearGradient id='a2' x1='1' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%237BA7FF' stop-opacity='.85'/%3E%3Cstop offset='.5' stop-color='%231E55BF' stop-opacity='.85'/%3E%3Cstop offset='1' stop-color='%2308224F' stop-opacity='.9'/%3E%3C/linearGradient%3E%3ClinearGradient id='a3' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%231D4FB4'/%3E%3Cstop offset='1' stop-color='%23050E22'/%3E%3C/linearGradient%3E%3ClinearGradient id='h1' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='.5' stop-color='%23CFE0FF' stop-opacity='.85'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='h2' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23E8C26A' stop-opacity='0'/%3E%3Cstop offset='.6' stop-color='%23E8C26A' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='%23E8C26A' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='f1' x='-5%25' y='-5%25' width='110%25' height='110%25'%3E%3CfeGaussianBlur stdDeviation='.9'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='390' height='292' fill='url(%23bg1)'/%3E%3Cpath d='M-20 200 C 90 90, 190 270, 290 140 S 400 60, 430 90 L430 150 C 400 120, 330 200, 270 230 S 100 330, -20 280 Z' fill='url(%23a1)'/%3E%3Cpath d='M-20 120 C 70 40, 180 180, 280 80 S 400 10, 430 30 L430 90 C 380 70, 330 150, 270 170 S 90 220, -20 200 Z' fill='url(%23a2)' opacity='.85'/%3E%3Cpath d='M-20 270 C 120 200, 200 300, 300 220 S 410 170, 430 190 L430 300 L-20 300 Z' fill='url(%23a3)'/%3E%3Cpath d='M-20 200 C 90 90, 190 270, 290 140 S 400 60, 430 90' fill='none' stroke='url(%23h1)' stroke-width='1.6' filter='url(%23f1)'/%3E%3Cpath d='M-20 120 C 70 40, 180 180, 280 80 S 400 10, 430 30' fill='none' stroke='url(%23h1)' stroke-width='1.2' opacity='.7' filter='url(%23f1)'/%3E%3Cpath d='M-20 270 C 120 200, 200 300, 300 220 S 410 170, 430 190' fill='none' stroke='url(%23h2)' stroke-width='1.2' filter='url(%23f1)'/%3E%3C/svg%3E");
   color: var(--text);
 }
 /* tema claro: gelo e prata, luz quente */
@@ -10428,8 +10427,11 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
   --fundo-css: radial-gradient(120% 80% at 70% 0%, #FFFFFF 0%, rgba(255,255,255,0) 60%), linear-gradient(180deg, #F2F7FF 0%, #D9E6F8 60%, #C9D9F0 100%);
   --fundo-veu: linear-gradient(180deg, rgba(255,255,255,.40) 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 54%, rgba(236,243,255,.78) 100%);
   --fundo-grao: .05;
+  --fundo-arte: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 292' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3ClinearGradient id='bg2' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF'/%3E%3Cstop offset='1' stop-color='%23D6E3F6'/%3E%3C/linearGradient%3E%3ClinearGradient id='b1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF' stop-opacity='.95'/%3E%3Cstop offset='.5' stop-color='%23C6D8F2' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='%238FAEDD' stop-opacity='.9'/%3E%3C/linearGradient%3E%3ClinearGradient id='b2' x1='1' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFFFF' stop-opacity='.9'/%3E%3Cstop offset='.5' stop-color='%23BCD0EE' stop-opacity='.85'/%3E%3Cstop offset='1' stop-color='%239DB8E3' stop-opacity='.9'/%3E%3C/linearGradient%3E%3ClinearGradient id='b3' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23B7CCEB'/%3E%3Cstop offset='1' stop-color='%23E6EEFA'/%3E%3C/linearGradient%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='.5' stop-color='%23FFFFFF' stop-opacity='1'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23B5832B' stop-opacity='0'/%3E%3Cstop offset='.6' stop-color='%23B5832B' stop-opacity='.8'/%3E%3Cstop offset='1' stop-color='%23B5832B' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='f2' x='-5%25' y='-5%25' width='110%25' height='110%25'%3E%3CfeGaussianBlur stdDeviation='.9'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='390' height='292' fill='url(%23bg2)'/%3E%3Cpath d='M-20 200 C 90 90, 190 270, 290 140 S 400 60, 430 90 L430 150 C 400 120, 330 200, 270 230 S 100 330, -20 280 Z' fill='url(%23b1)'/%3E%3Cpath d='M-20 120 C 70 40, 180 180, 280 80 S 400 10, 430 30 L430 90 C 380 70, 330 150, 270 170 S 90 220, -20 200 Z' fill='url(%23b2)' opacity='.85'/%3E%3Cpath d='M-20 270 C 120 200, 200 300, 300 220 S 410 170, 430 190 L430 300 L-20 300 Z' fill='url(%23b3)'/%3E%3Cpath d='M-20 200 C 90 90, 190 270, 290 140 S 400 60, 430 90' fill='none' stroke='url(%23g1)' stroke-width='2' filter='url(%23f2)'/%3E%3Cpath d='M-20 120 C 70 40, 180 180, 280 80 S 400 10, 430 30' fill='none' stroke='url(%23g1)' stroke-width='1.5' opacity='.9' filter='url(%23f2)'/%3E%3Cpath d='M-20 270 C 120 200, 200 300, 300 220 S 410 170, 430 190' fill='none' stroke='url(%23g2)' stroke-width='1.2' filter='url(%23f2)'/%3E%3C/svg%3E");
   color: var(--text);
 }
+/* faixa larga do desktop: a arte cobre a faixa (sem esticar) e mostra o trecho central */
+@media (min-width: 901px) { .mesband .hfm-fundo { background-size: cover, 100% 100%; background-position: center 58%, center; } }
 @media (max-width: 900px) {
   .mobile-topbar { height: auto; min-height: 292px; border: 0; }
   .mobile-topbar .hfm-period-row { margin-top: auto; }
@@ -10444,7 +10446,6 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 /* meses inativos: sobre a arte precisam de mais contraste que o padrão (62%) */
 .mobile-topbar .mesnav-chip b, .mesband .mesnav-chip b { color: color-mix(in oklab, var(--text) 80%, transparent); }
 .mobile-topbar .mesnav-ano-txt, .mesband .mesnav-ano-txt { color: color-mix(in oklab, var(--text) 78%, transparent); }
-@media (prefers-reduced-motion: reduce) { .hfm-fundo canvas { transition: none; } }
 </style>
 
 
@@ -10806,7 +10807,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 
   <!-- MOBILE TOPBAR -->
   <div class="mobile-topbar">
-    <div class="hfm-fundo" aria-hidden="true"><canvas></canvas></div>
+    <div class="hfm-fundo" aria-hidden="true"></div>
     <!-- Linha 1: Brand + tema -->
     <div class="mob-topbar-row hfm-topbar-main">
       <button class="mob-back-btn" id="mob-back-btn" onclick="voltarMobile()" aria-label="Voltar">
@@ -10880,7 +10881,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 
   <!-- FAIXA DE PERÍODO (desktop) — [FIX40] faixa dedicada: régua de meses + leitura do comprometido -->
   <div class="mesband" id="mesband">
-    <div class="hfm-fundo" aria-hidden="true"><canvas></canvas></div>
+    <div class="hfm-fundo" aria-hidden="true"></div>
     <div class="mesnav" id="mesnav-desk" role="group" aria-label="Escolher mês"></div>
   </div>
 
@@ -17807,7 +17808,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX49', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX50', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 43;
@@ -18703,158 +18704,6 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
         if (window.innerWidth > 900 || !e.target.closest) return;
         if (e.target.closest('.mob-menu-cell, .mob-hero-stat[data-goto], .kpi-snap-card[data-goto], .mob-fab-item, .mob-quick-actions button')) hfmHaptic();
       }, true);
-    })();
-  </script>
-  <script>
-    /* ═══ [FIX49] Fundo imersivo: dunas procedurais em WebGL (sem biblioteca, ~4 KB) ═══
-       - um fragment shader desenha 5 camadas de cristas com luz rasante, névoa e uma coluna de luz;
-       - tema escuro/claro: a paleta é interpolada em ~0,7 s ao trocar o tema (sem trocar de imagem);
-       - economia: 30 quadros/s, resolução reduzida, pausa fora da tela/aba oculta, quadro estático se o aparelho
-         pede menos movimento ou economia de dados, e reduz sozinho a resolução se o aparelho estiver lento;
-       - sem WebGL (ou contexto perdido) o gradiente CSS de .hfm-fundo continua valendo. */
-    (function () {
-      'use strict';
-      var VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
-      var FS = [
-        'precision highp float;',
-        'uniform vec2 uRes;uniform float uT;',
-        'uniform vec3 uTop,uBot,uFar,uNear,uRim,uBeam,uFog,uShade;uniform float uBeamK,uRimK,uHi;',
-        'float h1(vec2 p){p=fract(p*vec2(.1031,.1030));p+=dot(p,p.yx+33.33);return fract((p.x+p.y)*p.x);}',
-        'float vn(float x,float s){float i=floor(x),f=fract(x);f=f*f*f*(f*(f*6.-15.)+10.);return mix(h1(vec2(i,s)),h1(vec2(i+1.,s)),f);}',
-        'float rd(float x,float s,float t){float h=0.,a=.55,q=1.;',
-        '  for(int k=0;k<4;k++){h+=a*vn(x*q+t*(.10+.05*float(k))+s*5.3,s+float(k)*1.7);a*=.5;q*=2.07;}return h;}',
-        'void main(){',
-        '  vec2 uv=gl_FragCoord.xy/uRes;float asp=uRes.x/uRes.y;float x=uv.x*asp;',
-        '  vec3 col=mix(uBot,uTop,smoothstep(0.,1.,uv.y));',
-        '  float bx=(uv.x-.66)*asp;',
-        '  float beam=exp(-bx*bx*14.)*(.35+.65*smoothstep(0.,.8,uv.y));',
-        '  col+=uBeam*beam*uBeamK*(.88+.12*sin(uT*.35));',
-        '  float aa=2./uRes.y;',
-        '  for(int i=0;i<5;i++){',
-        '    float fi=float(i),d=fi/4.;',
-        '    float base=mix(.58,.10,d),amp=mix(.12,.22,d),fx=mix(.50,.90,d);',
-        '    float sx=x*fx+fi*2.9;',
-        '    float sw=.055*sin(x*(1.1+.25*fi)+fi*1.9+uT*.12);',
-        '    float y=base+sw+amp*(rd(sx,fi*1.37,uT)-.5);',
-        '    float y2=base+.055*sin((x+.03)*(1.1+.25*fi)+fi*1.9+uT*.12)+amp*(rd(sx+.03*fx,fi*1.37,uT)-.5);',
-        '    float sl=(y2-y)/.03;',
-        '    float m=smoothstep(y+aa,y-aa,uv.y);',
-        '    float below=smoothstep(0.,1.,(y-uv.y)/(.22+.10*d));',
-        '    float lit=clamp(.5-sl*.45,0.,1.);',
-        '    vec3 b=mix(uFar,uNear,pow(d,.85));',
-        '    vec3 lc=mix(min(b*uHi,vec3(1.)),mix(uShade,b,.20),below);',
-        '    lc=mix(lc*.90,lc*1.10,lit);',
-        '    float pool=exp(-bx*bx*7.)*lit;',
-        '    lc+=uBeam*pool*.34*uBeamK*(1.-below*.55)*(.45+.55*d);',
-        '    float ln=smoothstep(.44,.5,abs(fract((y-uv.y)*20.)-.5))*(1.-below)*lit;',
-        '    lc+=uRim*ln*.10*uRimK;',
-        '    float sh=exp(-pow((y-uv.y-.045)/.036,2.))*lit;',
-        '    lc+=uRim*sh*.28*uRimK;',
-        '    lc=mix(lc,uFog,(1.-d)*.40*(1.-below*.7));',
-        '    col=mix(col,lc,m);',
-        '    float crest=smoothstep(.010,0.,y-uv.y)*step(uv.y,y);',
-        '    col+=uRim*crest*uRimK*(.30+.70*lit)*m*(.45+.55*d);',
-        '  }',
-        '  col+=(h1(gl_FragCoord.xy+uT)-.5)/200.;',
-        '  gl_FragColor=vec4(col,1.);',
-        '}'
-      ].join('\n');
-      var PAL = {
-        dark:  { uTop: [.015, .035, .085], uBot: [.030, .090, .210], uFar: [.060, .160, .340], uNear: [.015, .050, .130], uRim: [.42, .62, 1.0], uBeam: [.22, .40, .85], uFog: [.10, .22, .45], uShade: [.008, .028, .085], uBeamK: .85, uRimK: .95, uHi: 1.75 },
-        light: { uTop: [.96, .98, 1.0], uBot: [.82, .90, .98], uFar: [.88, .93, .98], uNear: [.66, .77, .92], uRim: [1, 1, 1], uBeam: [1.0, .98, .92], uFog: [.93, .96, 1.0], uShade: [.52, .66, .88], uBeamK: .30, uRimK: .55, uHi: 1.02 }
-      };
-      var VEC = ['uTop', 'uBot', 'uFar', 'uNear', 'uRim', 'uBeam', 'uFog', 'uShade'], ESC = ['uBeamK', 'uRimK', 'uHi'];
-      var T_ESTATICO = 3.2, TWEEN_MS = 700;
-      var reduz = false;
-      try { reduz = matchMedia('(prefers-reduced-motion: reduce)').matches || !!(navigator.connection && navigator.connection.saveData); } catch (e) { }
-
-      function tema() { return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
-      function clonar(p) { var o = {}; VEC.forEach(function (k) { o[k] = p[k].slice(); }); ESC.forEach(function (k) { o[k] = p[k]; }); return o; }
-      var cur = clonar(PAL[tema()]), de = null, para = null, t0 = 0;
-      var insts = [], rodando = false, ultimo = 0, T0 = performance.now();
-
-      function compilar(gl, tipo, src) { var s = gl.createShader(tipo); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; }
-      function criar(box) {
-        var cv = box.querySelector('canvas'); if (!cv) return null;
-        var gl = cv.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'low-power' });
-        if (!gl) return null;
-        var vs = compilar(gl, gl.VERTEX_SHADER, VS), fs = compilar(gl, gl.FRAGMENT_SHADER, FS); if (!vs || !fs) return null;
-        var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
-        if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return null;
-        gl.useProgram(pr);
-        var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-        var a = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0);
-        var loc = {}; VEC.concat(ESC, ['uRes', 'uT']).forEach(function (k) { loc[k] = gl.getUniformLocation(pr, k); });
-        var inst = { box: box, cv: cv, gl: gl, loc: loc, escala: .75, w: 0, h: 0, visivel: true, lentos: 0, congelado: false };
-        cv.addEventListener('webglcontextlost', function (e) { e.preventDefault(); box.classList.remove('pronto'); inst.perdido = true; });
-        cv.addEventListener('webglcontextrestored', function () { var n = criar(box); if (n) { insts[insts.indexOf(inst)] = n; ajustar(n); desenhar(n, agora()); } });
-        return inst;
-      }
-      function agora() { return reduz ? T_ESTATICO : (performance.now() - T0) / 1000 + T_ESTATICO; }
-      function ajustar(i) {
-        var dpr = Math.min(window.devicePixelRatio || 1, 2) * i.escala;
-        var w = Math.round(i.box.clientWidth * dpr), h = Math.round(i.box.clientHeight * dpr);
-        if (w < 2 || h < 2) { i.w = 0; return; }
-        if (w !== i.w || h !== i.h) { i.w = w; i.h = h; i.cv.width = w; i.cv.height = h; i.gl.viewport(0, 0, w, h); }
-      }
-      function desenhar(i, t) {
-        if (!i || i.perdido || i.w < 2) return;
-        var gl = i.gl, L = i.loc;
-        gl.uniform2f(L.uRes, i.w, i.h); gl.uniform1f(L.uT, t);
-        VEC.forEach(function (k) { var v = cur[k]; gl.uniform3f(L[k], v[0], v[1], v[2]); });
-        ESC.forEach(function (k) { gl.uniform1f(L[k], cur[k]); });
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-        i.box.classList.add('pronto');
-      }
-      function desenharTodos() { var t = agora(); insts.forEach(function (i) { ajustar(i); desenhar(i, t); }); }
-
-      function passoTween(now) {
-        if (!para) return false;
-        var k = Math.min(1, (now - t0) / TWEEN_MS), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-        VEC.forEach(function (n) { cur[n] = de[n].map(function (v, j) { return v + (para[n][j] - v) * e; }); });
-        ESC.forEach(function (n) { cur[n] = de[n] + (para[n] - de[n]) * e; });
-        if (k >= 1) { para = null; }
-        return true;
-      }
-      function precisaAnimar() { return !reduz && !document.hidden && insts.some(function (i) { return i.w > 1 && i.visivel && !i.congelado && !i.perdido; }); }
-      function laco(now) {
-        rodando = false;
-        var tw = passoTween(now);
-        if (tw || precisaAnimar()) {
-          if (now - ultimo >= 33) {
-            var dt = now - ultimo; ultimo = now;
-            var t = agora();
-            insts.forEach(function (i) {
-              if (!i.visivel || i.congelado) return;
-              ajustar(i); desenhar(i, t);
-              // aparelho lento: baixa a resolução; se ainda assim não der, congela num quadro bonito
-              if (dt > 50 && !tw) { if (++i.lentos > 40) { i.lentos = 0; if (i.escala > .4) { i.escala *= .8; } else { i.congelado = true; } } } else if (i.lentos > 0) { i.lentos--; }
-            });
-          }
-          agendar();
-        }
-      }
-      function agendar() { if (!rodando) { rodando = true; requestAnimationFrame(laco); } }
-
-      function trocarTema() {
-        var alvo = PAL[tema()]; de = clonar(cur); para = clonar(alvo); t0 = performance.now();
-        if (reduz) { cur = clonar(alvo); para = null; desenharTodos(); } else { agendar(); }
-      }
-
-      function iniciar() {
-        document.querySelectorAll('.hfm-fundo').forEach(function (box) {
-          var i = criar(box); if (!i) return; insts.push(i);
-          if ('ResizeObserver' in window) new ResizeObserver(function () { ajustar(i); desenhar(i, agora()); agendar(); }).observe(box);
-          if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { i.visivel = es[es.length - 1].isIntersecting; if (i.visivel) agendar(); }).observe(box);
-        });
-        if (!insts.length) return;
-        desenharTodos(); agendar();
-        new MutationObserver(trocarTema).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-        document.addEventListener('visibilitychange', function () { if (!document.hidden) agendar(); });
-        window.addEventListener('resize', function () { desenharTodos(); agendar(); });
-      }
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
     })();
   </script>
 </body>
