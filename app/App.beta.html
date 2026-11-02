@@ -10436,8 +10436,8 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 @media (min-width: 901px) { :root:not([data-theme="dark"]) .mesband .mesnav-chip.on b { text-shadow: none; color: var(--accent); } :root:not([data-theme="dark"]) .mesband .mesnav-chip.on::after { box-shadow: none; } }
 /* ═══ [FIX50] Gradiente Premium nos cabeçalhos — só CSS (sem imagem, sem WebGL). Escuro: azul-noite com luz no alto. Claro: pérola/gelo. ═══ */
 .mobile-topbar, #mesband { --grao: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>"); }
-.mobile-topbar::before, #mesband::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .045; mix-blend-mode: overlay; background-image: var(--grao); }   /* granulado fino: tira o aspecto "chapado" */
-.mobile-topbar > *, #mesband > * { position: relative; z-index: 1; }
+.mesband::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .045; mix-blend-mode: overlay; background-image: var(--grao); }   /* granulado fino: tira o aspecto "chapado" */
+#mesband > * { position: relative; z-index: 1; }
 #mesband { position: relative; overflow: hidden; }
 @media (max-width: 900px) {
   .mobile-topbar { position: relative !important; overflow: hidden; }
@@ -10480,6 +10480,25 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
       radial-gradient(ellipse 60% 90% at 50% 120%, rgba(120,160,235,.30), transparent 70%),
       linear-gradient(180deg, #F6FAFF 0%, #DCE8F8 100%);
   }
+}
+/* ═══ [FIX51] Celular: barra (menu · logo · ⋯) FORA de cartão, direto sobre o fundo; ano e meses num painel de vidro logo abaixo ═══ */
+@media (max-width: 900px) {
+  :root[data-theme="dark"] .mobile-topbar, :root:not([data-theme="dark"]) .mobile-topbar { background: none !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; overflow: visible; }
+  /* fundo da página: gradiente Premium (céu pérola no claro, azul-noite com luz no escuro) */
+  :root:not([data-theme="dark"]) body { background: radial-gradient(130% 55% at 50% 0%, rgba(255,255,255,.95), transparent 62%), linear-gradient(180deg, #C6DDF7 0%, #DDEAFA 34%, #EEF4FB 70%, #F3F7FC 100%) fixed !important; }
+  :root[data-theme="dark"] body { background: radial-gradient(120% 45% at 50% 0%, rgba(90,140,230,.30), transparent 65%), radial-gradient(90% 40% at 50% 100%, rgba(40,90,190,.22), transparent 70%), linear-gradient(180deg, #060E1C 0%, #091A33 55%, #07142A 100%) fixed !important; }
+  /* barra: botões de vidro, marca em destaque */
+  .mobile-topbar .hfm-topbar-main { padding-top: calc(10px + env(safe-area-inset-top)); }
+  :root[data-theme="dark"] .mobile-topbar .mob-menu-btn, :root:not([data-theme="dark"]) .mobile-topbar .mob-menu-btn, .mobile-topbar .mob-more-btn { width: 44px !important; height: 44px !important; margin: 0 !important; border-radius: 15px !important;
+    background: color-mix(in oklab, var(--surface) 58%, transparent) !important; border: 1px solid var(--border-med) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 1px 0 color-mix(in oklab, #fff 30%, transparent) inset !important; }
+  .mobile-topbar .mob-brand span { font-size: 18px !important; font-weight: 700 !important; }
+  .mobile-topbar .mob-more-btn { margin-left: auto !important; }
+  /* painel de vidro do período */
+  .mobile-topbar { padding-bottom: 0 !important; }
+  .mobile-topbar .hfm-period-row { margin: 6px 0 4px !important; width: auto !important; box-sizing: border-box; padding: 6px 0 4px; border-radius: 26px; position: relative; overflow: hidden;
+    background: linear-gradient(160deg, color-mix(in oklab, var(--surface) 62%, transparent), color-mix(in oklab, var(--surface) 28%, transparent));
+    border: 1px solid var(--border-med); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    box-shadow: 0 12px 30px rgba(8,20,45,.18), inset 0 1px 0 color-mix(in oklab, #fff 28%, transparent); }
 }
 </style>
 
@@ -17841,7 +17860,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX50', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX51', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 43;
