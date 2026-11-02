@@ -10433,19 +10433,42 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 /* faixa larga do desktop: a arte cobre a faixa (sem esticar) e mostra o trecho central */
 @media (min-width: 901px) { .mesband .hfm-fundo { background-size: cover, 100% 100%; background-position: center 58%, center; } }
 @media (max-width: 900px) {
-  .mobile-topbar { height: auto; min-height: 292px; border: 0; }
-  .mobile-topbar .hfm-period-row { margin-top: auto; }
+  .mobile-topbar { height: auto; min-height: 0; border: 0; }
   :root[data-theme="dark"] .mobile-topbar { box-shadow: inset 0 -1px 0 rgba(141,180,255,.14), 0 14px 34px rgba(0,0,0,.45); }
   :root:not([data-theme="dark"]) .mobile-topbar { box-shadow: inset 0 -1px 0 rgba(10,50,120,.10), 0 14px 34px rgba(10,50,120,.18); }
 }
 /* destaque do mês ativo: no escuro brilha; no claro só cor e peso (brilho no texto claro fica "sujo") */
-:root[data-theme="dark"] .mobile-topbar .mesnav-chip.on b, :root[data-theme="dark"] .mesband .mesnav-chip.on b { color: var(--text); text-shadow: 0 0 14px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 2px color-mix(in oklab, var(--accent) 50%, transparent); }
-:root[data-theme="dark"] .mobile-topbar .mesnav-chip.on::after, :root[data-theme="dark"] .mesband .mesnav-chip.on::after { box-shadow: 0 0 10px var(--accent); }
-:root:not([data-theme="dark"]) .mobile-topbar .mesnav-chip.on b, :root:not([data-theme="dark"]) .mesband .mesnav-chip.on b { color: var(--accent); text-shadow: none; }
-:root:not([data-theme="dark"]) .mobile-topbar .mesnav-chip.on::after, :root:not([data-theme="dark"]) .mesband .mesnav-chip.on::after { box-shadow: none; }
+:root[data-theme="dark"] .mesband .mesnav-chip.on b { color: var(--text); text-shadow: 0 0 14px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 2px color-mix(in oklab, var(--accent) 50%, transparent); }
+:root[data-theme="dark"] .mesband .mesnav-chip.on::after { box-shadow: 0 0 10px var(--accent); }
+:root:not([data-theme="dark"]) .mesband .mesnav-chip.on b { color: var(--accent); text-shadow: none; }
+:root:not([data-theme="dark"]) .mesband .mesnav-chip.on::after { box-shadow: none; }
 /* meses inativos: sobre a arte precisam de mais contraste que o padrão (62%) */
 .mobile-topbar .mesnav-chip b, .mesband .mesnav-chip b { color: color-mix(in oklab, var(--text) 80%, transparent); }
 .mobile-topbar .mesnav-ano-txt, .mesband .mesnav-ano-txt { color: color-mix(in oklab, var(--text) 78%, transparent); }
+/* ═══ [FIX51] Seletor de período do celular: UMA cápsula de vidro (ano | meses) e topo compacto ═══
+   Ano e meses na mesma barra, separados por um fio; o mês ativo é uma pílula. Só vale no celular; o desktop segue o FIX46. */
+@media (max-width: 900px) {
+  .mobile-topbar { gap: 8px; padding-bottom: 14px; }
+  .mobile-topbar .mesnav { --mn-w: 60px; gap: 0; }
+  .mobile-topbar .mesnav-cap { flex-direction: row; align-items: stretch; height: 56px; overflow: hidden; border-radius: 20px;
+    background: var(--surface2); border: 1px solid var(--border-med);
+    -webkit-backdrop-filter: blur(14px) saturate(1.25); backdrop-filter: blur(14px) saturate(1.25);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 22px rgba(0,0,0,.16); }
+  .mobile-topbar .mesnav-ano { flex: none; align-self: stretch; align-items: center; height: auto; padding: 0 2px; gap: 0; border-right: 1px solid var(--border-med); }
+  .mobile-topbar .mesnav-ano-txt { padding: 0 2px; font-size: 14px; font-weight: 700; letter-spacing: .02em; color: var(--text); }
+  .mobile-topbar .mesnav-seta { width: 32px; height: 44px; font-size: 18px; color: var(--text-sec); }
+  .mobile-topbar .mesnav-palco { flex: 1 1 auto; min-width: 0; height: auto; }
+  .mobile-topbar .mesnav-palco::before, .mobile-topbar .mesnav-palco::after { content: none; }
+  .mobile-topbar .mesnav-faixa { height: 100%; padding: 0 calc(50% - var(--mn-w) / 2); -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 24%, #000 76%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 24%, #000 76%, transparent 100%); }
+  .mobile-topbar .mesnav-chip { justify-content: center; gap: 1px; }
+  .mobile-topbar .mesnav-chip::before { content: ''; position: absolute; inset: 7px 3px; border-radius: 14px; background: transparent; transition: background .2s, box-shadow .2s; }
+  .mobile-topbar .mesnav-chip::after { content: none; }
+  .mobile-topbar .mesnav-chip b { font-size: 13px; font-weight: 600; }
+  .mobile-topbar .mesnav-chip em { font-size: 10.5px; line-height: 12px; }
+  .mobile-topbar .mesnav-chip.on::before { background: var(--accent-dim); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 50%, transparent); }
+  .mobile-topbar .mesnav-chip.on b { font-size: 14px; font-weight: 700; text-shadow: none; color: var(--accent); }
+  :root[data-theme="dark"] .mobile-topbar .mesnav-chip.on b { color: #FFFFFF; }
+}
 </style>
 
 
@@ -17808,7 +17831,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX50', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX51', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 43;
