@@ -10576,6 +10576,28 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
   .mobile-topbar .mob-menu-btn svg, .mobile-topbar .mob-more-btn svg { width: 24px !important; height: 24px !important; opacity: .9; }
   .mobile-topbar .mob-menu-btn:active, .mobile-topbar .mob-more-btn:active { background: color-mix(in oklab, var(--text) 10%, transparent) !important; }
 }
+/* ═══ [FIX56] Listas e categorias editáveis ═══ */
+.lst-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; margin: 0 -2px; }
+.lst-tabs::-webkit-scrollbar { display: none; }
+.lst-tab { flex: none; border: 1px solid var(--border-med); background: transparent; color: var(--text-sec); font: inherit; font-size: 13px; font-weight: 600; padding: 8px 13px; min-height: 38px; border-radius: 999px; cursor: pointer; text-transform: none; letter-spacing: 0; position: relative; }
+.lst-tab.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.lst-tab.sujo::after { content: ''; position: absolute; top: 5px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: #F5B84B; }
+.lst-ajuda { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0 0 12px; text-transform: none; letter-spacing: 0; }
+#lst-body { max-height: 44vh; overflow-y: auto; padding-right: 2px; }
+.lst-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.lst-row .form-control { flex: 1; min-width: 0; }
+.lst-row .lst-uso { flex: none; font-size: 11px; color: var(--text-muted); white-space: nowrap; width: 78px; text-align: right; text-transform: none; letter-spacing: 0; }
+.lst-del { flex: none; width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border-med); background: transparent; color: var(--text-sec); font-size: 20px; line-height: 1; cursor: pointer; }
+.lst-del:hover { color: #E5484D; border-color: #E5484D; }
+.lst-lock { flex: none; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; opacity: .55; font-size: 14px; }
+.lst-sug { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
+.lst-sug button { border: 1px dashed var(--border-med); background: transparent; color: var(--text-sec); font: inherit; font-size: 12px; padding: 6px 10px; border-radius: 999px; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.lst-sug button:hover { border-style: solid; color: var(--text); }
+.lst-sug-t { font-size: 12px; color: var(--text-muted); margin-top: 12px; text-transform: none; letter-spacing: 0; }
+.lst-hist { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; font-weight: 500; color: var(--text-sec); margin: 12px 0 0; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.lst-hist input { margin-top: 2px; }
+.lst-edit { border: 0; background: none; padding: 0 0 0 8px; font: inherit; font-size: 11px; font-weight: 600; color: var(--accent); cursor: pointer; text-transform: none; letter-spacing: 0; }
+.ma-listas { margin-top: 20px; max-width: 560px; }
 </style>
 
 
@@ -11589,7 +11611,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
               <svg viewBox="0 0 24 24"><use href="#ic-layers"/></svg>
               Importar Fatura
             </button>
-            <button class="btn btn-ghost btn-sm" onclick="abrirModalCartoes()">
+            <button class="btn btn-ghost btn-sm" onclick="abrirListas('cartoes')">
               <svg viewBox="0 0 24 24">
                 <use href="#ic-settings" />
               </svg>
@@ -12160,6 +12182,10 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
           </div>
         </div>
         <div id="meu-app-root" class="ma-root"></div>
+        <div class="ma-listas"><div class="ma-sobre-card" style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+          <div style="min-width:200px;flex:1"><b style="font-size:14px">Listas e categorias</b><div style="font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-top:3px">Renomeie, exclua ou crie as sugestões de receitas, despesas, cartões e investimentos para combinar com a sua realidade.</div></div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="abrirListas()">Editar listas</button>
+        </div></div>
         <div id="meu-app-sobre" class="ma-sobre"></div>
       </div>
 
@@ -12383,7 +12409,31 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
         <div class="pref-txt"><b>Mostrar comprometido</b><span>Exibe, sob os próximos meses, quanto já está comprometido com despesas fixas e parcelas do cartão.</span></div>
         <input type="checkbox" role="switch" class="pref-switch" id="prefs-comp" onchange="mesnavToggleComp(this.checked)">
       </label>
+      <div class="pref-row pref-click" role="button" tabindex="0" onclick="fecharModal('modal-prefs'); abrirListas()">
+        <div class="pref-txt"><b>Listas e categorias</b><span>Renomeie, exclua ou crie as sugestões de receitas, despesas, cartões e investimentos.</span></div>
+        <span aria-hidden="true" style="font-size:20px;color:var(--text-muted)">›</span>
+      </div>
       <div class="modal-actions"><button type="button" class="btn btn-primary" onclick="fecharModal('modal-prefs')">Concluir</button></div>
+    </div>
+  </div>
+
+  <!-- MODAL LISTAS E CATEGORIAS (FIX56) -->
+  <div class="modal-overlay" id="modal-listas" aria-hidden="true">
+    <div class="modal modal-lg">
+      <div class="modal-title">Listas e categorias</div>
+      <div class="lst-tabs" id="lst-tabs" role="tablist"></div>
+      <p class="lst-ajuda" id="lst-ajuda"></p>
+      <div id="lst-body"></div>
+      <button type="button" class="btn btn-ghost" style="width:100%;margin-top:4px" onclick="listasAdicionar('')">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;"><use href="#ic-plus" /></svg>
+        Adicionar item
+      </button>
+      <div id="lst-sug-box"></div>
+      <label class="lst-hist" id="lst-hist-box"><input type="checkbox" id="lst-hist" checked><span>Ao renomear, atualizar também os lançamentos já feitos (recomendado). Se desmarcar, os lançamentos antigos mantêm o nome antigo.</span></label>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="lst-salvar" style="flex:1" onclick="listasSalvar()">Salvar esta lista</button>
+        <button type="button" class="btn btn-ghost" onclick="listasFechar()">Fechar</button>
+      </div>
     </div>
   </div>
 
@@ -15914,6 +15964,157 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     document.addEventListener('DOMContentLoaded', _setupModalA11y);
 
     // ════════════════════════════════════════════════
+    //  LISTAS E CATEGORIAS (FIX56) — renomear, excluir e criar as sugestões
+    // ════════════════════════════════════════════════
+    var _lst = { aba: 'receitas', cfg: null, est: {}, base: {} };
+    var _LST_ABAS = [['receitas', 'Receitas'], ['fixas', 'Despesas fixas'], ['variaveis', 'Variáveis'], ['naoRec', 'Não recorrentes'], ['cartoes', 'Cartões'], ['catCartao', 'Categorias do cartão'], ['tiposInvest', 'Investimentos']];
+    var _LST_AJUDA = {
+      receitas: 'De onde vem o seu dinheiro. Aparece ao lançar uma receita.',
+      fixas: 'Contas que se repetem todo mês (aluguel, internet, plano de saúde…).',
+      variaveis: 'Gastos do mês que mudam de valor (mercado, energia, combustível…).',
+      naoRec: 'Gastos eventuais, de vez em quando (IPVA, viagem, reformas…).',
+      cartoes: 'Os seus cartões de crédito (máximo de 6). Use os nomes que você reconhece na fatura.',
+      catCartao: 'Como você agrupa as compras do cartão.',
+      tiposInvest: 'Os tipos de investimento que você usa.'
+    };
+
+    function abrirListas(aba) {
+      _lst.aba = aba || _lst.aba || 'receitas';
+      _lst.cfg = null; _lst.est = {}; _lst.base = {};
+      document.getElementById('lst-body').innerHTML = '<div class="loading-state" style="padding:16px 0"><div class="spinner"></div></div>';
+      _listasRenderAbas();
+      abrirModal('modal-listas');
+      google.script.run.withSuccessHandler(cfg => { _lst.cfg = cfg; _listasRender(); })
+        .withFailureHandler(e => { toast('Não foi possível carregar as listas: ' + (e && e.message || e), 'err'); fecharModal('modal-listas'); })
+        .getListasConfig();
+    }
+
+    function _listasEstado(aba) {
+      if (!_lst.est[aba]) {
+        const nomes = (_lst.cfg && _lst.cfg.listas[aba]) || [];
+        const uso = (_lst.cfg && _lst.cfg.uso && _lst.cfg.uso[aba]) || {};
+        const prot = (_lst.cfg && _lst.cfg.protegidas && _lst.cfg.protegidas[aba]) || [];
+        _lst.est[aba] = nomes.map(n => ({ nome: n, original: n, uso: uso[n] || 0, prot: prot.indexOf(n) >= 0 }));
+        _lst.base[aba] = JSON.stringify(_lst.est[aba].map(r => r.nome));
+      }
+      return _lst.est[aba];
+    }
+
+    function _listasSujo(aba) {
+      if (!_lst.est[aba]) return false;
+      return JSON.stringify(_lst.est[aba].map(r => r.nome)) !== _lst.base[aba];
+    }
+
+    function _listasRenderAbas() {
+      document.getElementById('lst-tabs').innerHTML = _LST_ABAS.map(a =>
+        '<button type="button" role="tab" class="lst-tab' + (a[0] === _lst.aba ? ' on' : '') + (_listasSujo(a[0]) ? ' sujo' : '') + '" data-aba="' + a[0] + '">' + a[1] + '</button>').join('');
+      document.querySelectorAll('#lst-tabs .lst-tab').forEach(b => b.onclick = () => { _lst.aba = b.getAttribute('data-aba'); _listasRender(); });
+    }
+
+    function _listasRender() {
+      if (!_lst.cfg) return;
+      const aba = _lst.aba, est = _listasEstado(aba), body = document.getElementById('lst-body');
+      document.getElementById('lst-ajuda').textContent = _LST_AJUDA[aba] || '';
+      body.innerHTML = '';
+      est.forEach((r, i) => {
+        const row = document.createElement('div'); row.className = 'lst-row';
+        const inp = document.createElement('input'); inp.type = 'text'; inp.className = 'form-control lst-nome'; inp.maxLength = 60; inp.value = r.nome;
+        inp.setAttribute('aria-label', 'Nome do item'); inp.placeholder = 'Nome do item';
+        if (r.prot) { inp.readOnly = true; inp.title = 'Usado pelo sistema: não pode ser renomeado nem excluído.'; }
+        inp.oninput = () => { r.nome = inp.value; const t = document.querySelector('#lst-tabs .lst-tab.on'); if (t) t.classList.toggle('sujo', _listasSujo(aba)); _listasRenderSug(); };
+        row.appendChild(inp);
+        const uso = document.createElement('span'); uso.className = 'lst-uso'; uso.textContent = r.uso ? (r.uso + (r.uso === 1 ? ' lançamento' : ' lançamentos')) : ''; row.appendChild(uso);
+        if (r.prot) { const l = document.createElement('span'); l.className = 'lst-lock'; l.textContent = '🔒'; l.title = inp.title; row.appendChild(l); }
+        else {
+          const d = document.createElement('button'); d.type = 'button'; d.className = 'lst-del'; d.setAttribute('aria-label', 'Excluir item'); d.title = 'Excluir da lista'; d.textContent = '×';
+          d.onclick = () => {
+            if (est.length <= 1) { toast('A lista precisa ter ao menos 1 item.', 'err'); return; }
+            est.splice(i, 1); _listasRender();
+          };
+          row.appendChild(d);
+        }
+        body.appendChild(row);
+      });
+      _listasRenderAbas(); _listasRenderSug();
+      document.getElementById('lst-hist-box').style.display = '';
+    }
+
+    function _listasRenderSug() {
+      const aba = _lst.aba, box = document.getElementById('lst-sug-box');
+      const est = _listasEstado(aba), norm = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+      const tem = {}; est.forEach(r => { tem[norm(r.nome)] = 1; });
+      const falta = ((_lst.cfg.padroes && _lst.cfg.padroes[aba]) || []).filter(n => !tem[norm(n)]);
+      box.innerHTML = '';
+      if (!falta.length) return;
+      const t = document.createElement('div'); t.className = 'lst-sug-t'; t.textContent = 'Sugestões comuns (toque para adicionar):'; box.appendChild(t);
+      const w = document.createElement('div'); w.className = 'lst-sug';
+      falta.forEach(n => { const b = document.createElement('button'); b.type = 'button'; b.textContent = '+ ' + n; b.onclick = () => listasAdicionar(n); w.appendChild(b); });
+      box.appendChild(w);
+    }
+
+    function listasAdicionar(nome) {
+      const aba = _lst.aba, est = _listasEstado(aba);
+      if (aba === 'cartoes' && est.length >= 6) { toast('Máximo de 6 cartões.', 'err'); return; }
+      est.push({ nome: nome || '', original: '', uso: 0, prot: false });
+      _listasRender();
+      if (!nome) { const ins = document.querySelectorAll('#lst-body .lst-nome'); const u = ins[ins.length - 1]; if (u) { u.focus(); u.scrollIntoView({ block: 'nearest' }); } }
+    }
+
+    function listasSalvar() {
+      const aba = _lst.aba, est = _listasEstado(aba);
+      const itens = est.filter(r => String(r.nome).trim()).map(r => ({ nome: String(r.nome).trim(), original: r.original }));
+      if (!itens.length) { toast('A lista precisa ter ao menos 1 item.', 'err'); return; }
+      if (!_listasSujo(aba)) { toast('Nada foi alterado nesta lista.', 'ok'); return; }
+      const atualizar = document.getElementById('lst-hist').checked;
+      const ren = est.filter(r => r.original && String(r.nome).trim() && String(r.nome).trim() !== r.original);
+      const base = (_lst.cfg.listas[aba] || []);
+      const mantidos = {}; est.forEach(r => { if (r.original) mantidos[r.original] = 1; });
+      const uso = (_lst.cfg.uso && _lst.cfg.uso[aba]) || {};
+      const removidos = base.filter(n => !mantidos[n]);
+      const usadosRem = removidos.filter(n => uso[n] > 0);
+      const linhasRen = ren.reduce((a, r) => a + (r.uso || 0), 0);
+      const partes = [];
+      if (ren.length) partes.push(ren.length + (ren.length === 1 ? ' nome será alterado' : ' nomes serão alterados') + (atualizar ? (linhasRen ? ' e ' + linhasRen + ' lançamento(s) existente(s) será(ão) atualizado(s).' : '.') : '; os lançamentos antigos manterão o nome antigo.'));
+      if (removidos.length) partes.push(removidos.length + (removidos.length === 1 ? ' item será excluído' : ' itens serão excluídos') + ' das sugestões' + (usadosRem.length ? '. Os lançamentos que já usam ' + (usadosRem.length === 1 ? 'esse nome' : 'esses nomes') + ' continuam no histórico.' : '.'));
+      const seguir = () => gs('salvarListaConfig', [aba, itens, atualizar], r => {
+        if (!r || !r.ok) { toast((r && r.msg) || 'Não foi possível salvar.', 'err'); return; }
+        toast(r.msg, 'ok');
+        delete _lst.est[aba]; delete _lst.base[aba];
+        google.script.run.withSuccessHandler(cfg => { _lst.cfg = cfg; _listasRender(); }).getListasConfig();
+        hfmRecarregarListas();
+        if (r.linhas) { try { _compCache = {}; } catch (e) { } carregarDashboard(); }
+      }, 'lst-salvar', 'Erro ao salvar a lista');
+      if (!partes.length) { seguir(); return; }
+      hfmConfirm({ title: 'Salvar alterações', message: partes.join(' '), confirmText: 'Salvar' }).then(sim => { if (sim) seguir(); });
+    }
+
+    function listasFechar() {
+      const sujas = _LST_ABAS.filter(a => _listasSujo(a[0])).map(a => a[1]);
+      if (!sujas.length) { fecharModal('modal-listas'); return; }
+      hfmConfirm({ title: 'Descartar alterações?', message: 'Há alterações não salvas em: ' + sujas.join(', ') + '.', confirmText: 'Descartar', danger: true }).then(sim => { if (sim) fecharModal('modal-listas'); });
+    }
+
+    /* atualiza os seletores dos formulários depois de editar as listas */
+    function hfmRecarregarListas() {
+      const opt = (arr, ph) => '<option value="">' + ph + '</option>' + (arr || []).map(i => '<option>' + _h(i) + '</option>').join('');
+      const set = (id, html) => { const e = document.getElementById(id); if (!e) return; const cur = e.value; e.innerHTML = html; if (cur) e.value = cur; };
+      google.script.run.withSuccessHandler(l => { listasCache._rec = l; set('fr-desc', opt(l, 'Selecione a categoria')); }).getListaReceitas();
+      google.script.run.withSuccessHandler(d => { listasCache = Object.assign(listasCache, d); set('frc-cat', opt(d.fixas, 'Selecione a categoria')); try { atualizarDescDespesa(); } catch (e) { } }).getListasDescricao();
+      google.script.run.withSuccessHandler(d => { listasCache._cartoes = d.cartoes; listasCache._catCartao = d.categorias; set('fc-cartao', opt(d.cartoes, 'Selecione o cartão')); set('fc-cat', opt(d.categorias, 'Selecione a categoria')); }).getListaCartao();
+      google.script.run.withSuccessHandler(l => { listasCache._tipoInvest = l; set('fi-tipo', opt(l, 'Selecione o tipo')); }).getListaInvestimentos();
+    }
+
+    /* link "Editar lista" ao lado do rótulo de cada seletor */
+    document.addEventListener('DOMContentLoaded', function () {
+      [['fr-desc', "'receitas'"], ['frc-cat', "'fixas'"], ['fd-desc', "(v('fd-tipo')==='Não Recorrente'?'naoRec':'variaveis')"], ['fc-cartao', "'cartoes'"], ['fc-cat', "'catCartao'"], ['fi-tipo', "'tiposInvest'"]].forEach(function (p) {
+        var el = document.getElementById(p[0]); if (!el) return;
+        var g = el.closest('.form-group'); var lb = g && g.querySelector('label.form-label'); if (!lb || lb.querySelector('.lst-edit')) return;
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'lst-edit'; b.textContent = 'Editar lista';
+        b.setAttribute('onclick', 'abrirListas(' + p[1] + ')'); lb.appendChild(b);
+      });
+    });
+
+    // ════════════════════════════════════════════════
     //  MODAL CONFIGURAR CARTÕES (CRUD)
     // ════════════════════════════════════════════════
     function abrirModalCartoes() {
@@ -17943,7 +18144,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX55', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX56', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 43;
