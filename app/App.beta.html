@@ -15984,9 +15984,19 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
       document.getElementById('lst-body').innerHTML = '<div class="loading-state" style="padding:16px 0"><div class="spinner"></div></div>';
       _listasRenderAbas();
       abrirModal('modal-listas');
-      google.script.run.withSuccessHandler(cfg => { _lst.cfg = cfg; _listasRender(); })
-        .withFailureHandler(e => { toast('Não foi possível carregar as listas: ' + (e && e.message || e), 'err'); fecharModal('modal-listas'); })
-        .getListasConfig();
+      /* se o backend ainda não foi atualizado/reimplantado, a função não existe: nunca deixar o carregando girando para sempre */
+      let fim = false;
+      const falhou = (motivo) => {
+        if (fim) return; fim = true; clearTimeout(tmo);
+        document.getElementById('lst-body').innerHTML = '<p class="lst-ajuda" style="line-height:1.6">Não foi possível carregar as listas' + (motivo ? ' (' + _h(motivo) + ')' : '') + '.<br><br>Se você acabou de atualizar o script, publique uma <b>nova versão</b>: no Apps Script, <b>Implantar → Gerenciar implantações → ✎ Editar → Versão: Nova versão → Implantar</b>. Depois recarregue o app.</p>';
+        toast('Listas indisponíveis: o servidor ainda não tem esta função. Reimplante o script.', 'err');
+      };
+      const tmo = setTimeout(() => falhou('o servidor não respondeu'), 15000);
+      try {
+        google.script.run.withSuccessHandler(cfg => { if (fim) return; fim = true; clearTimeout(tmo); if (!cfg || !cfg.listas) { fim = false; falhou('resposta inesperada'); return; } _lst.cfg = cfg; _listasRender(); })
+          .withFailureHandler(e => falhou(e && e.message || String(e)))
+          .getListasConfig();
+      } catch (e) { falhou('função ausente no servidor'); }
     }
 
     function _listasEstado(aba) {
@@ -18147,7 +18157,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     var HFM_UI_VERSAO = 'FIX56', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
-    var HFM_SERVIDOR_MIN = 43;
+    var HFM_SERVIDOR_MIN = 45;
     // [FIX43b] Origem da tela. No arquivo do GitHub = 'github'. Na cópia embutida na planilha, troque para 'interna'.
     var HFM_ORIGEM = 'github';
     function hfmOrigemInfo() {
