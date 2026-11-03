@@ -10551,6 +10551,15 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
   .mob-hero-stat:nth-child(1) { background-image: radial-gradient(120% 150% at 0% 0%, color-mix(in oklab, var(--hue-rec) 16%, transparent), transparent 62%) !important; }
   .mob-hero-stat:nth-child(2) { background-image: radial-gradient(120% 150% at 0% 0%, color-mix(in oklab, var(--hue-desp) 16%, transparent), transparent 62%) !important; }
 }
+/* ═══ [FIX54] Container do ano/meses: borda brilhante de 1px (azul → dourado, mesma linguagem do saldo) ═══ */
+@media (max-width: 900px) {
+  .mobile-topbar .hfm-period-row { border: 0 !important; }
+  .mobile-topbar .hfm-period-row::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; z-index: 3;
+    background: linear-gradient(115deg, rgba(96,156,255,.95) 0%, rgba(120,170,255,.28) 38%, rgba(255,205,130,.28) 62%, rgba(244,190,96,.9) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+  :root[data-theme="dark"] .mobile-topbar .hfm-period-row { box-shadow: 0 -1px 22px rgba(80,140,255,.20), 0 12px 30px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.12) !important; }
+  :root:not([data-theme="dark"]) .mobile-topbar .hfm-period-row::before { background: linear-gradient(115deg, rgba(45,107,228,.60), rgba(45,107,228,.12) 40%, rgba(200,150,60,.16) 62%, rgba(200,150,60,.60)); }
+}
 </style>
 
 
@@ -15993,6 +16002,11 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
       return datas.some(x => x >= ymHoje);   // só lançamentos do mês corrente em diante; retroativos do mês a fechar passam
     }
 
+    /* FIX54: marca local "este mês já foi fechado/pulado" (chave aaaa-mm). Evita o lembrete voltar caso o servidor demore/falhe em reconhecer o registro. */
+    function _fechChaveLocal(st) { return 'hfm_fech_ok_' + st.ano + '-' + String(st.mes).padStart(2, '0'); }
+    function _fechMarcado(st) { try { return localStorage.getItem(_fechChaveLocal(st)) === '1'; } catch (e) { return false; } }
+    function _fechMarcar(st, on) { try { if (on) localStorage.setItem(_fechChaveLocal(st), '1'); else localStorage.removeItem(_fechChaveLocal(st)); } catch (e) { } }
+
     function _fechAtualizarBotao() {
       const d = document.getElementById('fech-dot');
       if (d) d.hidden = !(_fechSt && _fechSt.pendente);
@@ -16006,7 +16020,9 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
       if (!modOn('fechamento')) return;
       try {
         google.script.run.withSuccessHandler(st => {
-          _fechSt = st || null; _fechAtualizarBotao();
+          _fechSt = st || null;
+          if (_fechSt && _fechSt.pendente && _fechMarcado(_fechSt)) _fechSt.pendente = false;   // FIX54: já fechado/pulado neste aparelho (protege mesmo se o servidor não achar o registro)
+          _fechAtualizarBotao();
           if (_fechSt && _fechSt.pendente && !_fechSnooze) fechamentoAbrir(false);
         }).withFailureHandler(() => { }).getFechamentoStatus();
       } catch (e) { }
@@ -16045,7 +16061,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
           later.onclick = () => fecharModal('modal-fechamento');
           ok.onclick = () => hfmConfirm({ title: 'Reabrir ' + rot, message: 'O fechamento será desfeito e o lançamento de ajuste (se houver) será removido. Depois você poderá fechar o mês novamente.', confirmText: 'Reabrir', danger: true }).then(sim => {
             if (!sim) return;
-            gs('reabrirFechamento', [st.mes, st.ano], r => { toast((r && r.msg) || 'Mês reaberto.', r && r.ok ? 'ok' : 'err'); fecharModal('modal-fechamento'); fechamentoVerificar(); carregarDashboard(); }, 'fech-ok', 'Erro ao reabrir o mês');
+            gs('reabrirFechamento', [st.mes, st.ano], r => { if (r && r.ok) _fechMarcar(st, false); toast((r && r.msg) || 'Mês reaberto.', r && r.ok ? 'ok' : 'err'); fecharModal('modal-fechamento'); fechamentoVerificar(); carregarDashboard(); }, 'fech-ok', 'Erro ao reabrir o mês');
           });
         } else {
           intro.textContent = (_fechForcado ? 'Antes de lançar no mês novo, i' : 'I') + 'nforme quanto realmente sobrou em ' + st.mesNome + ' (conta + dinheiro em espécie). A diferença para o saldo estimado será lançada como “Não detalhado”.';
@@ -16061,7 +16077,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
             if (_fechForcado) { _fechRetry = null; toast('Lançamento não salvo: feche ou pule o mês de ' + st.mesNome + ' para lançar no mês novo.', 'warn'); }
             else { _fechSnooze = true; toast('Ok! Lembro você na próxima vez que abrir o app.', 'ok'); }
           };
-          const depois = () => { const r = _fechRetry; _fechRetry = null; _fechSt.pendente = false; _fechAtualizarBotao(); fecharModal('modal-fechamento'); carregarDashboard(); if (r) gs.apply(null, r); };
+          const depois = () => { const r = _fechRetry; _fechRetry = null; _fechSt.pendente = false; _fechMarcar(st, true); _fechAtualizarBotao(); fecharModal('modal-fechamento'); carregarDashboard(); if (r) gs.apply(null, r); };
           skip.onclick = () => gs('pularFechamento', [st.mes, st.ano], r => {
             if (!r || !r.ok) { toast((r && r.msg) || 'Não foi possível pular.', 'err'); return; }
             toast(r.msg, 'ok'); depois();
@@ -17911,7 +17927,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX53', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX54', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 43;
