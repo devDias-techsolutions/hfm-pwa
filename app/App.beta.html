@@ -10512,8 +10512,8 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 }
 /* ═══ [FIX53] Acabamento premium (celular, claro e escuro): matiz por categoria nos atalhos, trilho + pílula luminosa nos meses, vidro no saldo do tema claro ═══
    Cores por categoria ficam nas variáveis --hue-*; cada atalho só escolhe a sua em --h. */
-:root[data-theme="dark"] { --hue-rec: #3DDBAA; --hue-desp: #F5B54A; --hue-cart: #B39BFF; --hue-inv: #6AA6FF; --hue-emp: #A9B6CC; --hue-fix: #6AA6FF; --hue-rx: #4C86F0; --pilula-a: #5B93FF; --pilula-b: #2D6BE4; --pilula-glow: 0 6px 18px -4px rgba(60,120,255,.60); --sombra-cell: 0 10px 22px -12px color-mix(in oklab, var(--h) 60%, transparent); --brilho-ico: 0 0 20px -6px color-mix(in oklab, var(--h) 70%, transparent); --trilho-sombra: inset 0 1px 2px rgba(0,0,0,.16); }
-:root:not([data-theme="dark"]) { --hue-rec: #0E9F78; --hue-desp: #C77D0A; --hue-cart: #6D4AE0; --hue-inv: #1F5FD0; --hue-emp: #5B6B88; --hue-fix: #1F5FD0; --hue-rx: #0A3278; --pilula-a: #2E69D6; --pilula-b: #0A3278; --pilula-glow: 0 3px 8px -3px rgba(10,50,120,.35); --sombra-cell: 0 1px 2px rgba(20,40,80,.06), 0 8px 16px -10px rgba(20,40,80,.18); --brilho-ico: none; --trilho-sombra: inset 0 1px 1px rgba(20,40,80,.06); }
+:root[data-theme="dark"] { --hue-rec: #3DDBAA; --hue-desp: #F5B54A; --hue-cart: #B39BFF; --hue-inv: #6AA6FF; --hue-emp: #A9B6CC; --hue-fix: #6AA6FF; --hue-rx: #4C86F0; --pilula-a: #5B93FF; --pilula-b: #2D6BE4; --vidro-a: 62%; --vidro-b: 38%; --pilula-glow: 0 6px 18px -4px rgba(60,120,255,.60); --sombra-cell: 0 10px 22px -12px color-mix(in oklab, var(--h) 60%, transparent); --brilho-ico: 0 0 20px -6px color-mix(in oklab, var(--h) 70%, transparent); --trilho-sombra: inset 0 1px 2px rgba(0,0,0,.16); }
+:root:not([data-theme="dark"]) { --hue-rec: #0E9F78; --hue-desp: #C77D0A; --hue-cart: #6D4AE0; --hue-inv: #1F5FD0; --hue-emp: #5B6B88; --hue-fix: #1F5FD0; --hue-rx: #0A3278; --pilula-a: #2E69D6; --pilula-b: #0A3278; --vidro-a: 86%; --vidro-b: 92%; --pilula-glow: 0 3px 8px -3px rgba(10,50,120,.35); --sombra-cell: 0 1px 2px rgba(20,40,80,.06), 0 8px 16px -10px rgba(20,40,80,.18); --brilho-ico: none; --trilho-sombra: inset 0 1px 1px rgba(20,40,80,.06); }
 @media (max-width: 900px) {
   /* atalhos: borda em gradiente na cor da categoria, ícone com brilho próprio */
   .mob-menu-cell { --h: var(--hue-fix); }
@@ -10537,9 +10537,11 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     background: color-mix(in oklab, var(--text) 5%, transparent);
     box-shadow: var(--trilho-sombra), inset 0 0 0 1px color-mix(in oklab, var(--text) 7%, transparent); }
   .mobile-topbar .mesnav-palco::before, .mobile-topbar .mesnav-palco::after { content: none; }
-  .mobile-topbar .mesnav-chip.on::before { content: ''; position: absolute; inset: 4px 3px; z-index: -1; pointer-events: none; border-radius: 999px;
-    background: linear-gradient(145deg, var(--pilula-a), var(--pilula-b));
-    box-shadow: var(--pilula-glow), inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 0 1px rgba(255,255,255,.12); }
+  .mobile-topbar .mesnav-chip.on::before { content: ''; position: absolute; inset: 5px 3px; z-index: -1; pointer-events: none; border-radius: 16px; border: 2px solid transparent;
+    background: linear-gradient(160deg, color-mix(in oklab, var(--pilula-a) var(--vidro-a), transparent), color-mix(in oklab, var(--pilula-b) var(--vidro-b), transparent)) padding-box,
+                linear-gradient(160deg, rgba(255,255,255,1), rgba(255,255,255,.45) 45%, rgba(255,255,255,.9)) border-box;
+    -webkit-backdrop-filter: blur(10px) saturate(1.5); backdrop-filter: blur(10px) saturate(1.5);
+    box-shadow: var(--pilula-glow), inset 0 1px 0 rgba(255,255,255,.45), inset 0 -8px 14px -10px rgba(255,255,255,.25); }
   .mobile-topbar .mesnav-chip.on::after { content: none; }
   :root:not([data-theme="dark"]) .mobile-topbar .hfm-period-row { box-shadow: 0 1px 2px rgba(20,40,80,.06), 0 10px 20px -14px rgba(20,40,80,.22), inset 0 1px 0 rgba(255,255,255,.9); }
   .mobile-topbar .mesnav-chip.on b { color: #FFFFFF !important; text-shadow: none !important; }
