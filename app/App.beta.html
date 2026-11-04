@@ -10598,7 +10598,10 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 .lst-hist input { margin-top: 2px; }
 .lst-edit { border: 0; background: none; padding: 0 0 0 8px; font: inherit; font-size: 11px; font-weight: 600; color: var(--accent); cursor: pointer; text-transform: none; letter-spacing: 0; }
 .ma-listas { margin-top: 20px; max-width: 560px; }
-.ed-sit { display: inline-flex; }
+.ed-sit { display: flex !important; gap: 10px; width: 100%; background: none !important; border: 0 !important; padding: 0 !important; box-shadow: none !important; }
+.ed-sit .seg-btn { flex: 1; min-height: 44px; border: 1px solid var(--border-med) !important; border-radius: 12px !important; background: transparent; color: var(--text-sec); }
+.ed-sit .seg-btn.active { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff; }
+.ed-sit .seg-btn:not(.active):hover { border-color: var(--accent) !important; color: var(--text); }
 body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.open, #modal-edit-invest.open, #modal-listas.open) .mob-fab { display: none !important; }   /* o + flutuante não cobre campos/botões de nenhuma janela */
 #ed-pag-data-g[hidden], #ed-pag-valor-g[hidden], .ed-sit-aviso[hidden] { display: none !important; }
 .ed-sit-aviso { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; text-transform: none; letter-spacing: 0; }
@@ -18196,7 +18199,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX57', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX58', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 46;
