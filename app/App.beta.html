@@ -10605,6 +10605,25 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.open, #modal-edit-invest.open, #modal-listas.open) .mob-fab { display: none !important; }   /* o + flutuante não cobre campos/botões de nenhuma janela */
 #ed-pag-data-g[hidden], #ed-pag-valor-g[hidden], .ed-sit-aviso[hidden] { display: none !important; }
 .ed-sit-aviso { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; text-transform: none; letter-spacing: 0; }
+/* ═══ [FIX59] Seletor de ano/mês COMPACTO (celular): mesmo desenho, ~35% menos altura ═══ */
+@media (max-width: 900px) {
+  .mobile-topbar .hfm-topbar-main { min-height: 48px; }
+  .mobile-topbar .mob-brand .brand-icon { width: 34px !important; height: 34px !important; border-radius: 10px !important; }
+  .mobile-topbar .mob-brand span { font-size: 19px !important; }
+  .mobile-topbar .hfm-period-row { margin: 2px 0 2px !important; padding: 3px 0 2px !important; border-radius: 22px !important; }
+  .mobile-topbar .mesnav-ano { height: 18px; }
+  .mobile-topbar .mesnav-ano-txt { font-size: 11px; padding: 0 4px; }
+  .mobile-topbar .mesnav-seta { width: 26px; height: 18px; font-size: 15px; }
+  .mobile-topbar .mesnav-palco { height: 38px; margin: 1px 10px 5px; }
+  .mobile-topbar .mesnav-chip.on::before { inset: 5px 0; }
+  .mobile-topbar .mesnav-chip b { font-size: 13px; }
+  .mobile-topbar .mesnav-chip.on b { font-size: 14px; }
+  .layout { padding-top: 4px !important; }
+  main.main { padding-top: 12px !important; }
+  /* com "Mostrar comprometido" ligado, a trilha cresce só o necessário para caber o valor sob os próximos meses */
+  .mobile-topbar .mesnav.com-comp .mesnav-palco { height: 50px; }
+  .mobile-topbar .mesnav.com-comp .mesnav-chip.on::before { inset: 10px 0; }
+}
 </style>
 
 
@@ -18199,7 +18218,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX58', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX59', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 46;
