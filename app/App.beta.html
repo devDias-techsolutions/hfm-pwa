@@ -10598,6 +10598,10 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 .lst-hist input { margin-top: 2px; }
 .lst-edit { border: 0; background: none; padding: 0 0 0 8px; font: inherit; font-size: 11px; font-weight: 600; color: var(--accent); cursor: pointer; text-transform: none; letter-spacing: 0; }
 .ma-listas { margin-top: 20px; max-width: 560px; }
+.ed-sit { display: inline-flex; }
+body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.open, #modal-edit-invest.open, #modal-listas.open) .mob-fab { display: none !important; }   /* o + flutuante não cobre campos/botões de nenhuma janela */
+#ed-pag-data-g[hidden], #ed-pag-valor-g[hidden], .ed-sit-aviso[hidden] { display: none !important; }
+.ed-sit-aviso { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; text-transform: none; letter-spacing: 0; }
 </style>
 
 
@@ -12599,6 +12603,15 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
             class="form-control" inputmode="numeric"></div>
         <div class="form-group"><label class="form-label">Observação</label><input type="text" id="ed-obs"
             class="form-control" autocomplete="off"></div>
+        <div class="form-group full"><label class="form-label">Situação</label>
+          <div class="seg ed-sit" role="group" aria-label="Situação da despesa">
+            <button type="button" class="seg-btn" id="ed-sit-prev" onclick="edSituacao('Previsto')">A pagar (Previsto)</button>
+            <button type="button" class="seg-btn" id="ed-sit-pago" onclick="edSituacao('Pago')">Pago</button>
+          </div>
+          <div class="ed-sit-aviso" id="ed-sit-aviso" hidden></div>
+        </div>
+        <div class="form-group" id="ed-pag-data-g" hidden><label class="form-label">Data do pagamento</label><input type="date" id="ed-pag-data" class="form-control"></div>
+        <div class="form-group" id="ed-pag-valor-g" hidden><label class="form-label">Valor pago (R$)</label><input type="text" placeholder="igual ao valor" data-moeda autocomplete="off" id="ed-pag-valor" class="form-control" inputmode="numeric"></div>
       </div>
       <div class="modal-actions">
         <button class="btn btn-primary" id="btn-ed" onclick="salvarEdicaoDespesa()"><svg viewBox="0 0 24 24">
@@ -14882,7 +14895,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 
     function abrirModalPagamento(despId, statusAtual) {
       if (statusAtual === 'pago') {
-        toast('Esta despesa já foi marcada como paga.', 'inf');
+        abrirEdicao('despesas', despId);   // FIX57: pagou por engano? edite e volte para "a pagar"
         return;
       }
       _payDespId = despId;
@@ -15640,6 +15653,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
       }
       if (tipo === 'despesas') {
         sv('ed-id', id); sv('ed-row', rowIndex); sv('ed-status', d[10] || 'Pago'); sv('ed-recid', d[11] || '');
+        _edSitIni(d[10] || 'Pago');
         sv('ed-data', fdi(d[1])); sv('ed-valor', d[6]); sv('ed-obs', d[9] || '');
         document.getElementById('ed-tipo').value = d[4];
         atualizarDescEditDespesa();
@@ -15682,6 +15696,29 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
       }
     }
 
+    /* FIX57: corrigir a situação (A pagar ⇄ Pago) ao editar uma despesa */
+    var _edSit = 'Pago';
+    function _edSitIni(statusOrig) {
+      _edSit = (statusOrig === 'Pago' || statusOrig === 'Pago com Atraso') ? 'Pago' : 'Previsto';
+      sv('ed-pag-data', _hojeLocal()); sv('ed-pag-valor', '');
+      _edSitRender();
+    }
+    function edSituacao(s) { _edSit = s; _edSitRender(); }
+    function _edSitRender() {
+      const orig = document.getElementById('ed-status').value || 'Pago', eraPago = orig === 'Pago' || orig === 'Pago com Atraso', pago = _edSit === 'Pago';
+      document.getElementById('ed-sit-prev').classList.toggle('active', !pago);
+      document.getElementById('ed-sit-pago').classList.toggle('active', pago);
+      document.getElementById('ed-sit-prev').setAttribute('aria-pressed', String(!pago));
+      document.getElementById('ed-sit-pago').setAttribute('aria-pressed', String(pago));
+      const mostrarPag = pago && !eraPago;
+      document.getElementById('ed-pag-data-g').hidden = !mostrarPag;
+      document.getElementById('ed-pag-valor-g').hidden = !mostrarPag;
+      const av = document.getElementById('ed-sit-aviso');
+      if (pago && !eraPago) { av.hidden = false; av.textContent = 'Será marcada como paga. Informe a data do pagamento (e o valor, se foi diferente).'; }
+      else if (!pago && eraPago) { av.hidden = false; av.textContent = 'Voltará para "a pagar". A data de pagamento e o valor pago serão removidos; confira a data de vencimento acima.'; }
+      else av.hidden = true;
+    }
+
     function atualizarDescEditDespesa() {
       const tipo = document.getElementById('ed-tipo').value;
       const lista = tipo === 'Fixa' ? listasCache.fixas : tipo === 'Variável' ? listasCache.variaveis : tipo === 'Não Recorrente' ? listasCache.naoRec : [];
@@ -15699,10 +15736,15 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 
     function salvarEdicaoDespesa() {
       const id = v('ed-id'), rowIndex = v('ed-row'), data = v('ed-data'), tipo = v('ed-tipo'), desc = v('ed-desc'), valor = v('ed-valor'), obs = v('ed-obs');
-      const status = v('ed-status') || document.getElementById('ed-status').value;
+      const statusOrig = v('ed-status') || document.getElementById('ed-status').value;
       const recorrenteId = document.getElementById('ed-recid').value;
       if (!data || !tipo || !desc || !valor) { msg('ed-msg', 'Preencha os campos obrigatórios.', 'err'); return; }
-      gs('editarDespesa', [{ id, rowIndex: Number(rowIndex), data, tipo, descricao: desc, valor, obs, status, recorrenteId }], r => {
+      /* FIX57: situação escolhida. Sem mudança, mantém o status original (inclusive "Pago com Atraso" e os dados de pagamento). */
+      const queroPago = _edSit === 'Pago', eraPago = statusOrig === 'Pago' || statusOrig === 'Pago com Atraso';
+      const status = !queroPago ? 'Previsto' : (eraPago ? statusOrig : 'Pago');
+      const extra = {};
+      if (queroPago && !eraPago) { extra.dataPagamento = v('ed-pag-data') || _hojeLocal(); extra.valorPago = v('ed-pag-valor') || ''; }
+      gs('editarDespesa', [Object.assign({ id, rowIndex: Number(rowIndex), data, tipo, descricao: desc, valor, obs, status, recorrenteId }, extra)], r => {
         toast(r, 'ok'); fecharModal('modal-edit-despesa');
         carregarTabela('despesas'); carregarDashboard();
       }, 'btn-ed', 'Erro ao editar despesa');
@@ -18154,10 +18196,10 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX56', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX57', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
-    var HFM_SERVIDOR_MIN = 45;
+    var HFM_SERVIDOR_MIN = 46;
     // [FIX43b] Origem da tela. No arquivo do GitHub = 'github'. Na cópia embutida na planilha, troque para 'interna'.
     var HFM_ORIGEM = 'github';
     function hfmOrigemInfo() {
