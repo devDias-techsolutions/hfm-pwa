@@ -10624,6 +10624,13 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
   .mobile-topbar .mesnav.com-comp .mesnav-palco { height: 50px; }
   .mobile-topbar .mesnav.com-comp .mesnav-chip.on::before { inset: 10px 0; }
 }
+/* ═══ [FIX60] Desktop: tabela "Últimos Lançamentos" não corta mais a coluna Valor ═══ */
+.table-wrap:has(#dash-lancamentos) { overflow-x: auto; }
+.table-wrap:has(#dash-lancamentos) table { min-width: 0 !important; width: 100%; table-layout: fixed; }
+.table-wrap:has(#dash-lancamentos) th:nth-child(1), .table-wrap:has(#dash-lancamentos) td:nth-child(1) { width: 21%; white-space: nowrap; }
+.table-wrap:has(#dash-lancamentos) th:nth-child(2), .table-wrap:has(#dash-lancamentos) td:nth-child(2) { width: 16%; white-space: nowrap; }
+.table-wrap:has(#dash-lancamentos) th:nth-child(4), .table-wrap:has(#dash-lancamentos) td:nth-child(4) { width: 22%; white-space: nowrap; text-align: right; }
+.table-wrap:has(#dash-lancamentos) td:nth-child(3) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 
 
@@ -18218,7 +18225,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX59', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX60', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
     var HFM_SERVIDOR_MIN = 46;
