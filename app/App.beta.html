@@ -10598,6 +10598,7 @@ body:has(#modal-prefs.open) .mob-fab { display: none; }   /* o + flutuante não 
 .lst-hist input { margin-top: 2px; }
 .lst-edit { border: 0; background: none; padding: 0 0 0 8px; font: inherit; font-size: 11px; font-weight: 600; color: var(--accent); cursor: pointer; text-transform: none; letter-spacing: 0; }
 .ma-listas { margin-top: 20px; max-width: 560px; }
+.fd-status-erro { outline: 2px solid #E5484D; outline-offset: 4px; border-radius: 12px; }
 .ed-sit { display: flex !important; gap: 10px; width: 100%; background: none !important; border: 0 !important; padding: 0 !important; box-shadow: none !important; }
 .ed-sit .seg-btn { flex: 1; min-height: 44px; border: 1px solid var(--border-med) !important; border-radius: 12px !important; background: transparent; color: var(--text-sec); }
 .ed-sit .seg-btn.active { background: var(--accent) !important; border-color: var(--accent) !important; color: #fff; }
@@ -11922,7 +11923,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
             <div class="form-group full" data-mod="previsto">
               <label class="form-label">Status da Despesa *</label>
               <div style="display:flex;gap:8px;margin-top:2px" id="fd-status-wrap">
-                <button type="button" id="fd-btn-pago" class="btn btn-primary btn-sm" onclick="setStatusDespesa('Pago')"
+                <button type="button" id="fd-btn-pago" class="btn btn-ghost btn-sm" onclick="setStatusDespesa('Pago')"
                   style="flex:1">
                   <svg viewBox="0 0 24 24"
                     style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round">
@@ -11940,7 +11941,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
                   Ainda não pago
                 </button>
               </div>
-              <input type="hidden" id="fd-status" value="Pago">
+              <input type="hidden" id="fd-status" value="">
             </div>
             <!-- VENCIMENTO — aparece quando "Ainda não pago" -->
             <div class="form-group" id="fd-vencimento-row" style="display:none">
@@ -11949,7 +11950,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
               <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Quando esta conta deve ser paga</div>
             </div>
             <div class="form-group" id="fd-data-row">
-              <label class="form-label" id="fd-data-label">Data do Pagamento *</label>
+              <label class="form-label" id="fd-data-label">Data *</label>
               <input type="date" id="fd-data" class="form-control">
             </div>
             <div class="form-group fo-extra" id="fd-grp-tipo"><label class="form-label">Tipo *</label>
@@ -12003,6 +12004,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
             <div class="lote-toolbar">
               <label for="fdl-status">Status de todas as linhas</label>
               <select id="fdl-status" class="form-control" onchange="loteStatusTodas()">
+                <option value="">Escolha…</option>
                 <option>Pago</option>
                 <option>Previsto</option>
               </select>
@@ -14023,7 +14025,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
       const ult = box.querySelector('.lote-row:last-child');
       const tipo = pre.tipo || (ult ? ult.querySelector('.lr-tipo').value : '');
       const data = pre.data || (ult ? ult.querySelector('.lr-data').value : '') || _hojeLocal();
-      const status = pre.status === 'Previsto' ? 'Previsto' : (pre.status === 'Pago' ? 'Pago' : (document.getElementById('fdl-status').value || 'Pago'));
+      const status = pre.status === 'Previsto' ? 'Previsto' : (pre.status === 'Pago' ? 'Pago' : (document.getElementById('fdl-status').value || (modOn('previsto') ? '' : 'Pago')));
       const tipos = ['Fixa', 'Variável', 'Não Recorrente'];
       const div = document.createElement('div');
       div.className = 'lote-row';
@@ -14032,7 +14034,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
         <div><label>Tipo</label><select class="form-control lr-tipo" onchange="loteTipo(this)"><option value="">Tipo</option>${tipos.map(t => `<option${t === tipo ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
         <div class="c2"><label>Categoria</label><select class="form-control lr-cat">${_loteOpts(tipo, pre.descricao || '')}</select></div>
         <div><label>Valor (R$)</label><input type="text" data-moeda autocomplete="off" class="form-control lr-valor" inputmode="numeric" placeholder="0,00" value="${pre.valor != null ? _h(pre.valor) : ''}" oninput="loteTotal()"></div>
-        <div><label>Status</label><select class="form-control lr-status"><option${status === 'Pago' ? ' selected' : ''}>Pago</option><option${status === 'Previsto' ? ' selected' : ''}>Previsto</option></select></div>
+        <div><label>Status</label><select class="form-control lr-status"><option value=""${status === '' ? ' selected' : ''}>Escolha…</option><option${status === 'Pago' ? ' selected' : ''}>Pago</option><option${status === 'Previsto' ? ' selected' : ''}>Previsto</option></select></div>
         <div class="c5"><label>Observação</label><input type="text" class="form-control lr-obs" placeholder="Opcional" autocomplete="off" value="${_h(pre.obs || '')}"></div>
         <div class="lote-del-wrap"><button type="button" class="btn btn-ghost btn-sm" onclick="loteRemover(this)">Remover</button></div>`;
       box.appendChild(div);
@@ -14082,6 +14084,8 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
         if (!it.tipo) falta.push('tipo');
         if (!it.descricao) falta.push('categoria');
         if (!(parseFloat(it.valor) > 0)) falta.push('valor');
+        if (!it.status && !modOn('previsto')) it.status = 'Pago';
+        if (!it.status) falta.push('status (pago ou a pagar)');
         if (falta.length) { row.classList.add('invalid'); erros.push('Linha ' + (i + 1) + ': falta ' + falta.join(', ')); return; }
         it.dataVencimento = it.status === 'Previsto' ? it.data : '';
         itens.push(it);
@@ -15397,7 +15401,13 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
       const vencRow = document.getElementById('fd-vencimento-row');
       const dataLabel = document.getElementById('fd-data-label');
 
-      if (status === 'Previsto') {
+      document.getElementById('fd-status-wrap').classList.remove('fd-status-erro');
+      if (!status) {   // FIX61: sem padrão — o usuário precisa escolher (evita lançar como pago sem querer)
+        btnPago.className = 'btn btn-ghost btn-sm';
+        btnPrevisto.className = 'btn btn-ghost btn-sm';
+        vencRow.style.display = 'none';
+        dataLabel.textContent = 'Data *';
+      } else if (status === 'Previsto') {
         btnPrevisto.className = 'btn btn-primary btn-sm';
         btnPago.className = 'btn btn-ghost btn-sm';
         vencRow.style.display = '';
@@ -15418,10 +15428,14 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
       const parc = v('fd-parcela');
       const tot = v('fd-total');
       const obs = v('fd-obs');
-      const status = document.getElementById('fd-status').value || 'Pago';
+      const status = document.getElementById('fd-status').value || (modOn('previsto') ? '' : 'Pago');   // FIX61: sem padrão; no modo simples (sem "previsto") continua Pago
       const venc = v('fd-vencimento');
 
       if (!data || !tipo || !desc || !valor) { toast('Preencha os campos obrigatórios (*)', 'err'); return; }
+      if (!status) {
+        const w = document.getElementById('fd-status-wrap'); w.classList.add('fd-status-erro'); w.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        toast('Informe se a despesa já foi paga ou ainda não.', 'err'); return;
+      }
       if (status === 'Previsto' && !venc) { toast('Informe a data de vencimento.', 'err'); return; }
 
       gs('salvarDespesa', [{ data, tipo, descricao: desc, valor, parcela: parc, totalParcelas: tot, obs, status, dataVencimento: venc }], m => {
@@ -15502,7 +15516,7 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
     function limparFormDespesa() {
       ['fd-tipo', 'fd-desc', 'fd-valor', 'fd-obs', 'fd-parcela', 'fd-total', 'fd-valparcela', 'fd-vencimento'].forEach(set);
       ['fd-parcelas-row', 'fd-p1', 'fd-p2', 'fd-p3'].forEach(id => document.getElementById(id).style.display = 'none');
-      setStatusDespesa('Pago');  // reseta para "Já foi pago"
+      setStatusDespesa(modOn('previsto') ? '' : 'Pago');  // FIX61: volta a ficar sem seleção (obrigatório escolher)
       document.getElementById('fd-msg').className = 'form-msg';
     }
     function limparFormRecorrente() { ['frc-cat', 'frc-valor', 'frc-dia', 'frc-obs'].forEach(set); document.getElementById('frc-msg').className = 'form-msg'; }
@@ -18225,10 +18239,10 @@ body:has(#modal-edit-despesa.open, #modal-edit-receita.open, #modal-edit-cartao.
     }
 
     // ── Sobre este sistema: versões + informações para suporte (sem dados financeiros) ──
-    var HFM_UI_VERSAO = 'FIX60', _hfmVerBack = '';
+    var HFM_UI_VERSAO = 'FIX61', _hfmVerBack = '';
     // [FIX43] A tela vem do GitHub e pode ficar mais nova que o servidor (planilha) de um testador.
     // Quando uma tela passar a exigir função nova do servidor, suba este número: quem estiver atrasado é avisado.
-    var HFM_SERVIDOR_MIN = 46;
+    var HFM_SERVIDOR_MIN = 47;
     // [FIX43b] Origem da tela. No arquivo do GitHub = 'github'. Na cópia embutida na planilha, troque para 'interna'.
     var HFM_ORIGEM = 'github';
     function hfmOrigemInfo() {
